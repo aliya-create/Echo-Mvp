@@ -1,108 +1,128 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ECHO MVP</title>
+  <title>ECHO MVP - Personality Discovery</title>
   <style>
-    body { font-family: Arial; text-align: center; padding: 40px; }
-    button { margin: 10px; padding: 10px 20px; }
+    body { font-family: 'Arial', sans-serif; text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; }
+    h1 { font-size: 2.5em; margin-bottom: 10px; }
+    #question { font-size: 1.3em; margin: 30px 0; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; }
+    button { margin: 10px; padding: 15px 25px; font-size: 1.1em; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s; background: rgba(255,255,255,0.2); color: white; }
+    button:hover { background: rgba(255,255,255,0.4); transform: scale(1.05); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    #nextBtn { background: #4CAF50; font-weight: bold; margin-top: 20px; padding: 15px 40px; font-size: 1.2em; }
+    #result { margin-top: 30px; font-size: 1.2em; }
+    .trait { display: inline-block; margin: 10px 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px; }
+    #progress { margin: 20px 0; font-size: 1.1em; }
+    .selected { background: rgba(76,175,80,0.6) !important; }
   </style>
 </head>
 
 <body>
+  <h1>ECHO</h1>
+  <p id="progress">Question 1 of 3</p>
+  <p id="question">Every choice leaves an echo...</p>
+  <div id="choices"></div>
+  <button id="nextBtn" onclick="nextQuestion()" style="display:none;">Next Dilemma</button>
+  <h2 id="result"></h2>
 
-<h1>ECHO</h1>
-<p id="question"></p>
+  <script>
+    const scenarios = [
+      {
+        question: "You find a lost wallet with cash. What do you do?",
+        choices: [
+          { text: "Return it immediately", effects: { integrity: 12, empathy: 8, risk: -3, self: -4 }, desc: "High Integrity" },
+          { text: "Keep the cash, ditch wallet", effects: { integrity: -12, empathy: -6, risk: 6, self: 10 }, desc: "Opportunist" },
+          { text: "Donate anonymously", effects: { integrity: 7, empathy: 12, risk: -1, self: -2 }, desc: "Altruist" }
+        ]
+      },
+      {
+        question: "Friend lies and asks you to back their story.",
+        choices: [
+          { text: "Support the lie loyally", effects: { integrity: -9, empathy: 7, risk: 3, self: 5 }, desc: "Loyal" },
+          { text: "Refuse honestly", effects: { integrity: 11, empathy: -3, risk: 4, self: -2 }, desc: "Principled" },
+          { text: "Change the subject", effects: { integrity: -3, empathy: 1, risk: -2, self: 6 }, desc: "Avoidant" }
+        ]
+      },
+      {
+        question: "Store gives extra change by mistake.",
+        choices: [
+          { text: "Hand it back right away", effects: { integrity: 9, empathy: 4, risk: -2, self: -5 }, desc: "Honest" },
+          { text: "Pocket it silently", effects: { integrity: -7, empathy: -3, risk: 3, self: 7 }, desc: "Pragmatic" },
+          { text: "Save for charity", effects: { integrity: 5, empathy: 8, risk: 0, self: -1 }, desc: "Generous" }
+        ]
+      }
+    ];
 
-<div id="choices"></div>
+    let current = 0;
+    let traits = { integrity: 50, empathy: 50, risk: 50, self: 50 };
+    let selectedChoice = null;
 
-<button onclick="nextQuestion()">Next</button>
+    function showQuestion() {
+      const q = scenarios[current];
+      document.getElementById("question").innerText = q.question;
+      document.getElementById("progress").innerText = `Question ${current + 1} of ${scenarios.length}`;
+      document.getElementById("choices").innerHTML = "";
+      document.getElementById("nextBtn").style.display = "none";
 
-<h2 id="result"></h2>
+      q.choices.forEach((choice, index) => {
+        const btn = document.createElement("button");
+        btn.innerText = choice.text;
+        btn.onclick = () => selectChoice(index, choice.effects);
+        document.getElementById("choices").appendChild(btn);
+      });
+    }
 
-<script>
-const scenarios = [
-  {
-    question: "You find a lost wallet. What do you do?",
-    choices: [
-      { text: "Return it", effects: { integrity: 10, empathy: 5, risk: -2, self: -5 } },
-      { text: "Keep it", effects: { integrity: -10, empathy: -5, risk: 4, self: 8 } },
-      { text: "Donate it", effects: { integrity: 6, empathy: 10, risk: -1, self: -3 } }
-    ]
-  },
-  {
-    question: "Your friend lies and asks you to support them.",
-    choices: [
-      { text: "Support them", effects: { integrity: -8, empathy: 6, risk: 2, self: 4 } },
-      { text: "Refuse", effects: { integrity: 10, empathy: -2, risk: 3, self: -3 } },
-      { text: "Avoid", effects: { integrity: -2, empathy: -1, risk: -3, self: 5 } }
-    ]
-  },
-  {
-    question: "You get extra change at a store.",
-    choices: [
-      { text: "Return it", effects: { integrity: 8, empathy: 3, risk: -1, self: -4 } },
-      { text: "Keep quiet", effects: { integrity: -6, empathy: -2, risk: 2, self: 5 } },
-      { text: "Donate later", effects: { integrity: 4, empathy: 6, risk: 0, self: -2 } }
-    ]
-  }
-];
+    function selectChoice(index, effects) {
+      // Disable all buttons and highlight selected
+      const buttons = document.querySelectorAll("#choices button");
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === index) {
+          btn.classList.add("selected");
+          selectedChoice = effects;
+        }
+      });
+      document.getElementById("nextBtn").style.display = "inline-block";
+    }
 
-let current = 0;
+    function applyChoice(effects) {
+      for (let key in effects) {
+        traits[key] += effects[key];
+        traits[key] = Math.max(0, Math.min(100, traits[key]));
+      }
+    }
 
-let traits = {
-  integrity: 50,
-  empathy: 50,
-  risk: 50,
-  self: 50
-};
+    function nextQuestion() {
+      if (selectedChoice) {
+        applyChoice(selectedChoice);
+        selectedChoice = null;
+      }
+      current++;
+      if (current < scenarios.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
 
-function showQuestion() {
-  const q = scenarios[current];
-  document.getElementById("question").innerText = q.question;
+    function showResult() {
+      document.getElementById("question").innerText = "Your Echo Profile Revealed";
+      document.getElementById("choices").innerHTML = "";
+      document.getElementById("nextBtn").style.display = "none";
+      document.getElementById("progress").style.display = "none";
 
-  const choicesDiv = document.getElementById("choices");
-  choicesDiv.innerHTML = "";
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `
+        <div class="trait">🛡️ Integrity: ${traits.integrity}/100</div>
+        <div class="trait">❤️ Empathy: ${traits.empathy}/100</div>
+        <div class="trait">⚡ Risk: ${traits.risk}/100</div>
+        <div class="trait">👤 Self-Focus: ${traits.self}/100</div>
+        <p>Share your Echo! (Global avg: 50 across traits)</p>
+        <button onclick="location.reload()">Play Again</button>
+      `;
+    }
 
-  q.choices.forEach(choice => {
-    const btn = document.createElement("button");
-    btn.innerText = choice.text;
-    btn.onclick = () => applyChoice(choice.effects);
-    choicesDiv.appendChild(btn);
-  });
-}
-
-function applyChoice(effects) {
-  for (let key in effects) {
-    traits[key] += effects[key];
-    if (traits[key] > 100) traits[key] = 100;
-    if (traits[key] < 0) traits[key] = 0;
-  }
-}
-
-function nextQuestion() {
-  current++;
-
-  if (current < scenarios.length) {
     showQuestion();
-  } else {
-    showResult();
-  }
-}
-
-function showResult() {
-  document.getElementById("question").innerText = "Your Echo Profile";
-
-  document.getElementById("choices").innerHTML = "";
-
-  document.getElementById("result").innerText =
-    "Integrity: " + traits.integrity +
-    " | Empathy: " + traits.empathy +
-    " | Risk: " + traits.risk +
-    " | Self: " + traits.self;
-}
-
-showQuestion();
-</script>
-
+  </script>
 </body>
 </html>
