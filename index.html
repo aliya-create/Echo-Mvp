@@ -1,36 +1,816 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>ECHO MVP Fixed</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ECHO — The Game That Shows Who You Really Are</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-    h1 { font-size: 2.5em; margin: 0 0 20px; }
-    #progress { font-size: 1.2em; margin: 10px 0; }
-    #question { font-size: 1.4em; margin: 30px 0; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 15px; }
-    #choices button { display: block; margin: 15px auto; padding: 18px 35px; font-size: 1.2em; border: none; border-radius: 30px; cursor: pointer; background: rgba(255,255,255,0.25); color: white; transition: all 0.3s; width: 80%; max-width: 400px; }
-    #choices button:hover:not(:disabled) { background: rgba(255,255,255,0.45); transform: scale(1.02); }
-    #choices button:disabled { opacity: 0.6; cursor: not-allowed; }
-    .selected { background: #4CAF50 !important; box-shadow: 0 0 20px rgba(76,175,80,0.5); }
-    #nextBtn { display: none; background: #4CAF50; padding: 20px 50px; font-size: 1.3em; font-weight: bold; margin-top: 30px; }
-    #result .trait { display: inline-block; margin: 15px; padding: 20px; background: rgba(0,0,0,0.4); border-radius: 12px; font-size: 1.3em; }
-    #share { margin-top: 20px; background: #FF9800; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f5f4f1;
+      --bg-tertiary: #eeede9;
+      --text-primary: #1a1a18;
+      --text-secondary: #5f5e5a;
+      --text-tertiary: #888780;
+      --border-light: rgba(26,26,24,0.12);
+      --border-mid: rgba(26,26,24,0.22);
+      --border-strong: rgba(26,26,24,0.35);
+      --radius-md: 8px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: #1a1a18;
+        --bg-secondary: #242422;
+        --bg-tertiary: #2c2c2a;
+        --text-primary: #f0efe9;
+        --text-secondary: #b4b2a9;
+        --text-tertiary: #888780;
+        --border-light: rgba(240,239,233,0.10);
+        --border-mid: rgba(240,239,233,0.18);
+        --border-strong: rgba(240,239,233,0.30);
+      }
+    }
+
+    html, body {
+      min-height: 100vh;
+      background: var(--bg-tertiary);
+      font-family: 'Syne', sans-serif;
+      color: var(--text-primary);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-xl);
+      border: 0.5px solid var(--border-light);
+      overflow: hidden;
+      min-height: 600px;
+    }
+
+    .screen { display: none; }
+    .screen.active { display: flex; flex-direction: column; }
+
+    /* ── WELCOME ── */
+    .welcome-screen {
+      padding: 3rem 2rem 2.5rem;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 600px;
+    }
+
+    .echo-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 60px;
+      letter-spacing: -2px;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .echo-tagline {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+
+    .preview-card {
+      background: var(--bg-secondary);
+      border: 0.5px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 2rem;
+    }
+
+    .preview-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 10px;
+    }
+
+    .preview-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 19px;
+      color: var(--text-primary);
+      line-height: 1.45;
+    }
+
+    .start-btn {
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 15px 44px;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: opacity 0.15s;
+      margin-bottom: 1rem;
+    }
+    .start-btn:hover { opacity: 0.8; }
+
+    .welcome-meta {
+      font-size: 12px;
+      color: var(--text-tertiary);
+    }
+
+    /* ── SCENARIO ── */
+    .scenario-screen {
+      padding: 1.5rem 1.75rem 2rem;
+      min-height: 600px;
+    }
+
+    .scenario-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 30px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border-light);
+      transition: background 0.3s;
+    }
+    .dot.done { background: var(--text-primary); }
+    .dot.current { background: var(--text-secondary); }
+
+    .timer-wrap {
+      position: relative;
+      width: 46px;
+      height: 46px;
+    }
+    .timer-wrap svg { transform: rotate(-90deg); }
+    .t-bg { stroke: var(--border-light); }
+    .t-fg { stroke: var(--text-primary); stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+    .t-num {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .scenario-theme-label {
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 8px;
+    }
+
+    .scenario-q {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      line-height: 1.45;
+      color: var(--text-primary);
+      margin-bottom: 2rem;
+      flex: 1;
+    }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .choice {
+      background: var(--bg-primary);
+      border: 0.5px solid var(--border-mid);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      color: var(--text-primary);
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      line-height: 1.45;
+      transition: all 0.14s;
+    }
+    .choice:hover { background: var(--bg-secondary); border-color: var(--border-strong); transform: translateX(3px); }
+    .choice.selected { border-color: var(--text-primary); background: var(--bg-secondary); }
+    .choice.unchosen { opacity: 0.35; pointer-events: none; }
+
+    .c-letter {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 0.5px solid var(--border-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+    .choice.selected .c-letter {
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      border-color: transparent;
+    }
+
+    .c-trait {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--bg-secondary);
+      color: var(--text-tertiary);
+      margin-left: auto;
+      flex-shrink: 0;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .choice.selected .c-trait { opacity: 1; }
+
+    /* ── INSIGHT ── */
+    .insight-screen {
+      padding: 2.5rem 2rem;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 600px;
+    }
+
+    .insight-eyebrow {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 1rem;
+    }
+
+    .insight-headline {
+      font-family: 'DM Serif Display', serif;
+      font-size: 26px;
+      color: var(--text-primary);
+      line-height: 1.35;
+      margin-bottom: 0.6rem;
+      max-width: 360px;
+    }
+
+    .insight-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      max-width: 320px;
+      margin-bottom: 2.5rem;
+    }
+
+    .bars-wrap {
+      width: 100%;
+      max-width: 380px;
+      margin-bottom: 2.5rem;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .bar-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      width: 96px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 6px;
+      background: var(--bg-secondary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--text-primary);
+      width: 0;
+      transition: width 0.85s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .bar-pct {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      width: 32px;
+      text-align: left;
+    }
+
+    .insight-btn {
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 14px 36px;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .insight-btn:hover { opacity: 0.8; }
+
+    /* ── PROFILE ── */
+    .profile-screen {
+      padding: 1.5rem 1.75rem 2rem;
+      min-height: 600px;
+    }
+
+    .profile-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.75rem;
+    }
+
+    .profile-top-label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 4px;
+    }
+
+    .profile-top-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px;
+      color: var(--text-primary);
+    }
+
+    .profile-top-meta {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      text-align: right;
+    }
+
+    .echo-card {
+      background: var(--bg-secondary);
+      border: 0.5px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .ec-type {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 6px;
+    }
+
+    .ec-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 28px;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .ec-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+    }
+
+    .trait-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .trait-cell {
+      background: var(--bg-primary);
+      border: 0.5px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 10px 8px;
+      text-align: center;
+    }
+
+    .tc-score {
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .tc-name {
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+
+    .compare-box {
+      border: 0.5px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .compare-title {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-tertiary);
+      margin-bottom: 14px;
+    }
+
+    .c-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .c-stat:last-child { margin-bottom: 0; }
+
+    .c-stat-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .c-stat-value {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .rank-pill {
+      display: inline-block;
+      background: var(--bg-secondary);
+      border: 0.5px solid var(--border-light);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .action-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 13px 10px;
+      border-radius: var(--radius-md);
+      font-family: 'Syne', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.15s, background 0.15s;
+    }
+
+    .action-btn.solid {
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      border: none;
+    }
+    .action-btn.solid:hover { opacity: 0.82; }
+
+    .action-btn.outline {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 0.5px solid var(--border-mid);
+    }
+    .action-btn.outline:hover { background: var(--bg-secondary); }
+
+    .replay-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      background: none;
+      border: none;
+      font-family: 'Syne', sans-serif;
+      width: 100%;
+    }
   </style>
 </head>
 <body>
-  <h1>🗣️ ECHO</h1>
-  <div id="progress">Question 1 / 3</div>
-  <p id="question">Your choices reveal who you are...</p>
-  <div id="choices"></div>
-  <button id="nextBtn" onclick="nextQuestion()">Next Echo →</button>
-  <div id="result" style="display:none;"></div>
+<div class="app-shell">
 
-  <script>
-    const scenarios = [ /* same 3 scenarios as before - omitted for brevity, copy from previous */ 
-      {question:"You find a lost wallet with cash. What do you do?", choices:[
-        {text:"Return it immediately", effects:{integrity:12, empathy:8, risk:-3, self:-4}},
-        {text:"Keep the cash, ditch wallet", effects:{integrity:-12, empathy:-6, risk:6, self:10}},
-        {text:"Donate anonymously", effects:{integrity:7, empathy:12, risk:-1, self:-2}}
-      ]},
-      {question:"Friend lies and asks you to back their story.", choices:[
-        {text:"Support the lie loyally", effects:{integrity:-9, empathy:7, risk:3, self:5}},
-        {text:"Refuse honestly
+  <!-- WELCOME -->
+  <div class="screen welcome-screen active" id="screenWelcome">
+    <div class="echo-logo">ECHO</div>
+    <div class="echo-tagline">Every choice leaves an echo</div>
+    <div class="preview-card">
+      <div class="preview-label">Today's dilemma</div>
+      <div class="preview-text">"You find a wallet with $200 and an ID. Nobody is around. What do you do?"</div>
+    </div>
+    <button class="start-btn" onclick="startGame()">Begin your echo &rarr;</button>
+    <div class="welcome-meta">3 scenarios &middot; ~2 minutes &middot; instant profile</div>
+  </div>
+
+  <!-- SCENARIO -->
+  <div class="screen scenario-screen" id="screenScenario">
+    <div class="scenario-header">
+      <div class="progress-dots" id="progressDots"></div>
+      <div class="timer-wrap">
+        <svg width="46" height="46" viewBox="0 0 46 46">
+          <circle class="t-bg" cx="23" cy="23" r="19" fill="none" stroke-width="3"/>
+          <circle class="t-fg" cx="23" cy="23" r="19" fill="none" stroke-width="3"
+            stroke-dasharray="119.4" stroke-dashoffset="0" id="timerArc"/>
+        </svg>
+        <div class="t-num" id="timerNum">12</div>
+      </div>
+    </div>
+    <div class="scenario-theme-label" id="scenarioTheme"></div>
+    <div class="scenario-q" id="scenarioQ"></div>
+    <div class="choices" id="choicesWrap"></div>
+  </div>
+
+  <!-- INSIGHT -->
+  <div class="screen insight-screen" id="screenInsight">
+    <div class="insight-eyebrow">Echo insight unlocked</div>
+    <div class="insight-headline" id="insightHeadline"></div>
+    <div class="insight-desc" id="insightDesc"></div>
+    <div class="bars-wrap" id="barsWrap"></div>
+    <button class="insight-btn" onclick="showProfile()">See your echo profile &rarr;</button>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen profile-screen" id="screenProfile">
+    <div class="profile-top">
+      <div>
+        <div class="profile-top-label">Your echo card</div>
+        <div class="profile-top-title">Session complete</div>
+      </div>
+      <div class="profile-top-meta">3 / 3<br>choices made</div>
+    </div>
+    <div class="echo-card" id="echoCardEl"></div>
+    <div class="compare-box">
+      <div class="compare-title">Global compare</div>
+      <div class="c-stat">
+        <span class="c-stat-label">Your trust echo rank</span>
+        <span class="rank-pill" id="rankEl">Top 18%</span>
+      </div>
+      <div class="c-stat">
+        <span class="c-stat-label">Altruism vs global avg</span>
+        <span class="c-stat-value" id="altruismEl">+34%</span>
+      </div>
+      <div class="c-stat">
+        <span class="c-stat-label">Players this week</span>
+        <span class="c-stat-value">84,291</span>
+      </div>
+    </div>
+    <div class="action-row">
+      <button class="action-btn solid" onclick="shareResult()">
+        <i class="ti ti-share" aria-hidden="true"></i> Share my echo
+      </button>
+      <button class="action-btn outline" onclick="resetGame()">
+        <i class="ti ti-refresh" aria-hidden="true"></i> Play again
+      </button>
+    </div>
+    <button class="replay-link" onclick="resetGame()">&#8617; Try a different theme</button>
+  </div>
+
+</div>
+
+<script>
+const SCENARIOS = [
+  {
+    theme: "⬦ Integrity",
+    question: "You find a wallet with $200 cash and an ID. Nobody is around. What do you do?",
+    choices: [
+      { text: "Return it to the owner directly using the ID — keep nothing.", trait: "Altruism", pts: { altruism: 10, integrity: 10, empathy: 6 } },
+      { text: "Hand it to the nearest police station anonymously.", trait: "Integrity", pts: { altruism: 6, integrity: 8, empathy: 4 } },
+      { text: "Take the cash but return the wallet and cards.", trait: "Risk", pts: { altruism: 2, integrity: 2, empathy: 2 } },
+      { text: "Keep everything — finder's keepers.", trait: "Impulse", pts: { altruism: 0, integrity: 0, empathy: 0 } }
+    ]
+  },
+  {
+    theme: "⬦ Loyalty",
+    question: "A close friend asks you to cover for them — say they were with you last night. They seem scared but won't explain.",
+    choices: [
+      { text: "Cover for them without question — they need me.", trait: "Loyalty", pts: { altruism: 5, integrity: 2, empathy: 8 } },
+      { text: "Ask for the full story before deciding anything.", trait: "Empathy", pts: { altruism: 5, integrity: 7, empathy: 9 } },
+      { text: "Refuse — lying makes me uncomfortable regardless.", trait: "Integrity", pts: { altruism: 2, integrity: 10, empathy: 3 } },
+      { text: "Agree for now, then quietly figure out what happened.", trait: "Caution", pts: { altruism: 4, integrity: 4, empathy: 5 } }
+    ]
+  },
+  {
+    theme: "⬦ Courage",
+    question: "You overhear your manager taking full credit for your team's work in front of senior leadership.",
+    choices: [
+      { text: "Interrupt and set the record straight right now.", trait: "Courage", pts: { altruism: 4, integrity: 10, empathy: 5 } },
+      { text: "Wait, then confront your manager privately after.", trait: "Empathy", pts: { altruism: 5, integrity: 7, empathy: 8 } },
+      { text: "Send a follow-up email to leadership with evidence.", trait: "Integrity", pts: { altruism: 3, integrity: 9, empathy: 6 } },
+      { text: "Let it go — not worth the conflict right now.", trait: "Caution", pts: { altruism: 1, integrity: 2, empathy: 3 } }
+    ]
+  }
+];
+
+const ARCHETYPES = [
+  { name: "Balanced Guardian", desc: "You weigh logic and feeling in equal measure. People trust you because you show up — not just for yourself, but for others. You're the person others call when things get complicated." },
+  { name: "Principled Empath", desc: "Truth matters deeply to you, but so does how people feel. You rarely cut corners, and when you do, guilt follows quickly. You hold high standards without losing warmth." },
+  { name: "Cautious Realist", desc: "You read the room before you act. Some call it hesitation — you call it strategy. You value outcomes over appearances, and rarely say something you'll regret." },
+  { name: "Intuitive Ally", desc: "Loyalty runs deep in you. You decide with your gut and your gut is often right. You build trust by showing up consistently, even when it costs you something." }
+];
+
+let current = 0;
+let scores = { altruism: 0, integrity: 0, empathy: 0 };
+let timerInt = null;
+let timeLeft = 12;
+let chosenArchetype = ARCHETYPES[0];
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startGame() {
+  current = 0;
+  scores = { altruism: 0, integrity: 0, empathy: 0 };
+  loadScenario();
+  show('screenScenario');
+}
+
+function loadScenario() {
+  const s = SCENARIOS[current];
+  document.getElementById('scenarioTheme').textContent = s.theme;
+  document.getElementById('scenarioQ').textContent = '\u201c' + s.question + '\u201d';
+
+  const dots = document.getElementById('progressDots');
+  dots.innerHTML = '';
+  SCENARIOS.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i < current ? ' done' : i === current ? ' current' : '');
+    dots.appendChild(d);
+  });
+
+  const wrap = document.getElementById('choicesWrap');
+  wrap.innerHTML = '';
+  ['A','B','C','D'].forEach((letter, i) => {
+    if (!s.choices[i]) return;
+    const c = s.choices[i];
+    const btn = document.createElement('button');
+    btn.className = 'choice';
+    btn.innerHTML = `<span class="c-letter">${letter}</span><span style="flex:1">${c.text}</span><span class="c-trait">${c.trait}</span>`;
+    btn.onclick = () => pick(i, c.pts, btn);
+    wrap.appendChild(btn);
+  });
+
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timerInt);
+  timeLeft = 12;
+  tick();
+  timerInt = setInterval(() => {
+    timeLeft--;
+    tick();
+    if (timeLeft <= 0) { clearInterval(timerInt); autoSelect(); }
+  }, 1000);
+}
+
+function tick() {
+  document.getElementById('timerNum').textContent = timeLeft;
+  const arc = document.getElementById('timerArc');
+  arc.style.strokeDashoffset = 119.4 * (1 - timeLeft / 12);
+}
+
+function autoSelect() {
+  const btns = document.querySelectorAll('.choice');
+  if (btns.length) btns[0].click();
+}
+
+function pick(idx, pts, btn) {
+  clearInterval(timerInt);
+  Object.keys(pts).forEach(k => { scores[k] = Math.min(100, scores[k] + pts[k] * 10); });
+  document.querySelectorAll('.choice').forEach((b, i) => {
+    b.style.pointerEvents = 'none';
+    b.classList.add(i === idx ? 'selected' : 'unchosen');
+  });
+  setTimeout(() => {
+    current++;
+    if (current < SCENARIOS.length) loadScenario();
+    else buildInsight();
+  }, 900);
+}
+
+function buildInsight() {
+  const dominant = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0];
+  const domName = dominant[0].charAt(0).toUpperCase() + dominant[0].slice(1);
+  const pct = Math.min(95, Math.round(dominant[1] / 10));
+
+  document.getElementById('insightHeadline').textContent = 'High ' + domName + ' Echo — top ' + (100 - pct) + '% globally.';
+  document.getElementById('insightDesc').textContent = 'Your decisions suggest you prioritize ' + domName.toLowerCase() + ' significantly more than the average ECHO player. Here\'s your full trait breakdown:';
+
+  const bars = document.getElementById('barsWrap');
+  bars.innerHTML = '';
+  [
+    { label: 'Altruism', score: Math.min(100, scores.altruism) },
+    { label: 'Integrity', score: Math.min(100, scores.integrity) },
+    { label: 'Empathy', score: Math.min(100, scores.empathy) },
+    { label: 'Global avg', score: 42 }
+  ].forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+    row.innerHTML = `<div class="bar-label">${t.label}</div><div class="bar-track"><div class="bar-fill" data-w="${t.score}%"></div></div><div class="bar-pct">${t.score}</div>`;
+    bars.appendChild(row);
+  });
+
+  show('screenInsight');
+  setTimeout(() => { document.querySelectorAll('.bar-fill').forEach(f => { f.style.width = f.dataset.w; }); }, 80);
+
+  const total = scores.altruism + scores.integrity + scores.empathy;
+  if (total > 190) chosenArchetype = ARCHETYPES[1];
+  else if (scores.empathy > scores.integrity) chosenArchetype = ARCHETYPES[3];
+  else if (scores.altruism < 40) chosenArchetype = ARCHETYPES[2];
+  else chosenArchetype = ARCHETYPES[0];
+}
+
+function showProfile() {
+  const extras = [
+    { name: 'Resilience', score: Math.round(Math.random() * 20 + 52) },
+    { name: 'Courage', score: Math.round(Math.random() * 20 + 44) },
+    { name: 'Caution', score: Math.round(Math.random() * 20 + 35) }
+  ];
+  const allTraits = [
+    { name: 'Altruism', score: Math.min(100, scores.altruism) },
+    { name: 'Integrity', score: Math.min(100, scores.integrity) },
+    { name: 'Empathy', score: Math.min(100, scores.empathy) },
+    ...extras
+  ];
+
+  document.getElementById('echoCardEl').innerHTML = `
+    <div class="ec-type">Echo archetype</div>
+    <div class="ec-name">${chosenArchetype.name}</div>
+    <div class="ec-desc">${chosenArchetype.desc}</div>
+    <div class="trait-grid">${allTraits.map(t => `<div class="trait-cell"><div class="tc-score">${t.score}</div><div class="tc-name">${t.name}</div></div>`).join('')}</div>
+  `;
+
+  const dom = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('rankEl').textContent = 'Top ' + Math.max(5, 100 - Math.min(95, dom[1])) + '%';
+  document.getElementById('altruismEl').textContent = '+' + Math.max(3, Math.round(scores.altruism - 42)) + '%';
+
+  show('screenProfile');
+}
+
+function shareResult() {
+  const text = 'I just played ECHO and got "' + chosenArchetype.name + '" — every choice leaves an echo. What does yours say about you?';
+  if (navigator.share) {
+    navigator.share({ title: 'My ECHO result', text: text, url: window.location.href });
+  } else {
+    navigator.clipboard.writeText(text + ' ' + window.location.href).then(() => {
+      alert('Result copied to clipboard — paste it anywhere to share!');
+    });
+  }
+}
+
+function resetGame() { startGame(); }
+</script>
+</body>
+</html>
