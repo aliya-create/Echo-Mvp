@@ -546,10 +546,10 @@
     <div class="echo-tagline">Every choice leaves an echo</div>
     <div class="preview-card">
       <div class="preview-label">Today's dilemma</div>
-      <div class="preview-text">"You find a wallet with $200 and an ID. Nobody is around. What do you do?"</div>
+      <div class="preview-text">"You can save five strangers or one person you love. You have 20 seconds."</div>
     </div>
     <button class="start-btn" onclick="startGame()">Begin your echo &rarr;</button>
-    <div class="welcome-meta">3 scenarios &middot; ~2 minutes &middot; instant profile</div>
+    <div class="welcome-meta">5 scenarios &middot; ~3 minutes &middot; instant profile</div>
   </div>
 
   <!-- SCENARIO -->
@@ -562,7 +562,7 @@
           <circle class="t-fg" cx="23" cy="23" r="19" fill="none" stroke-width="3"
             stroke-dasharray="119.4" stroke-dashoffset="0" id="timerArc"/>
         </svg>
-        <div class="t-num" id="timerNum">12</div>
+        <div class="t-num" id="timerNum">20</div>
       </div>
     </div>
     <div class="scenario-theme-label" id="scenarioTheme"></div>
@@ -586,18 +586,18 @@
         <div class="profile-top-label">Your echo card</div>
         <div class="profile-top-title">Session complete</div>
       </div>
-      <div class="profile-top-meta">3 / 3<br>choices made</div>
+      <div class="profile-top-meta">5 / 5<br>choices made</div>
     </div>
     <div class="echo-card" id="echoCardEl"></div>
     <div class="compare-box">
       <div class="compare-title">Global compare</div>
       <div class="c-stat">
-        <span class="c-stat-label">Your trust echo rank</span>
+        <span class="c-stat-label">Your shadow echo rank</span>
         <span class="rank-pill" id="rankEl">Top 18%</span>
       </div>
       <div class="c-stat">
-        <span class="c-stat-label">Altruism vs global avg</span>
-        <span class="c-stat-value" id="altruismEl">+34%</span>
+        <span class="c-stat-label">Shadow vs global avg</span>
+        <span class="c-stat-value" id="altruismEl">Above avg ↑</span>
       </div>
       <div class="c-stat">
         <span class="c-stat-label">Players this week</span>
@@ -620,48 +620,69 @@
 <script>
 const SCENARIOS = [
   {
-    theme: "⬦ Integrity",
-    question: "You find a wallet with $200 cash and an ID. Nobody is around. What do you do?",
+    theme: "⬦ The Trolley Problem",
+    question: "A runaway trolley is heading toward five people tied to the tracks. You can pull a lever to divert it — but it will kill one person on the side track. That person is a stranger. What do you do?",
     choices: [
-      { text: "Return it to the owner directly using the ID — keep nothing.", trait: "Altruism", pts: { altruism: 10, integrity: 10, empathy: 6 } },
-      { text: "Hand it to the nearest police station anonymously.", trait: "Integrity", pts: { altruism: 6, integrity: 8, empathy: 4 } },
-      { text: "Take the cash but return the wallet and cards.", trait: "Risk", pts: { altruism: 2, integrity: 2, empathy: 2 } },
-      { text: "Keep everything — finder's keepers.", trait: "Impulse", pts: { altruism: 0, integrity: 0, empathy: 0 } }
+      { text: "Pull the lever. Five lives outweigh one — the math is clear.", trait: "Utilitarian", pts: { control: 9, empathy: 4, integrity: 6, shadow: 5 } },
+      { text: "Do nothing. Actively causing a death feels different from allowing one.", trait: "Deontologist", pts: { control: 2, empathy: 7, integrity: 9, shadow: 2 } },
+      { text: "Pull it — but I'd carry guilt for that one person forever.", trait: "Empath", pts: { control: 7, empathy: 10, integrity: 6, shadow: 3 } },
+      { text: "I freeze. I can't decide — so I don't.", trait: "Paralysis", pts: { control: 0, empathy: 5, integrity: 3, shadow: 7 } }
     ]
   },
   {
-    theme: "⬦ Loyalty",
-    question: "A close friend asks you to cover for them — say they were with you last night. They seem scared but won't explain.",
+    theme: "⬦ Betrayal",
+    question: "You discover your best friend of 10 years has been secretly spreading damaging lies about you to your colleagues. They don't know you know. What do you do?",
     choices: [
-      { text: "Cover for them without question — they need me.", trait: "Loyalty", pts: { altruism: 5, integrity: 2, empathy: 8 } },
-      { text: "Ask for the full story before deciding anything.", trait: "Empathy", pts: { altruism: 5, integrity: 7, empathy: 9 } },
-      { text: "Refuse — lying makes me uncomfortable regardless.", trait: "Integrity", pts: { altruism: 2, integrity: 10, empathy: 3 } },
-      { text: "Agree for now, then quietly figure out what happened.", trait: "Caution", pts: { altruism: 4, integrity: 4, empathy: 5 } }
+      { text: "Confront them directly and demand an explanation.", trait: "Confronter", pts: { control: 7, empathy: 5, integrity: 10, shadow: 3 } },
+      { text: "Say nothing — but quietly cut them out of your life forever.", trait: "Silent Exit", pts: { control: 6, empathy: 3, integrity: 5, shadow: 8 } },
+      { text: "Gather more evidence first. Then decide with full information.", trait: "Strategist", pts: { control: 9, empathy: 4, integrity: 7, shadow: 6 } },
+      { text: "Forgive without confronting — maybe they had reasons.", trait: "Forgiver", pts: { control: 2, empathy: 10, integrity: 4, shadow: 1 } }
     ]
   },
   {
-    theme: "⬦ Courage",
-    question: "You overhear your manager taking full credit for your team's work in front of senior leadership.",
+    theme: "⬦ Power & Corruption",
+    question: "You're offered a high-paying job. Mid-process, you learn the company engages in legal but clearly exploitative practices toward vulnerable communities. The role would make you financially free.",
     choices: [
-      { text: "Interrupt and set the record straight right now.", trait: "Courage", pts: { altruism: 4, integrity: 10, empathy: 5 } },
-      { text: "Wait, then confront your manager privately after.", trait: "Empathy", pts: { altruism: 5, integrity: 7, empathy: 8 } },
-      { text: "Send a follow-up email to leadership with evidence.", trait: "Integrity", pts: { altruism: 3, integrity: 9, empathy: 6 } },
-      { text: "Let it go — not worth the conflict right now.", trait: "Caution", pts: { altruism: 1, integrity: 2, empathy: 3 } }
+      { text: "Decline. No amount of money is worth compromising your ethics.", trait: "Principled", pts: { control: 4, empathy: 8, integrity: 10, shadow: 0 } },
+      { text: "Accept — then use the position and income to push change from inside.", trait: "Infiltrator", pts: { control: 9, empathy: 6, integrity: 5, shadow: 6 } },
+      { text: "Accept. This is the real world — someone else would take it anyway.", trait: "Realist", pts: { control: 6, empathy: 2, integrity: 2, shadow: 9 } },
+      { text: "Accept, but quietly donate a portion to offset the harm.", trait: "Compensator", pts: { control: 5, empathy: 5, integrity: 4, shadow: 5 } }
+    ]
+  },
+  {
+    theme: "⬦ Truth vs. Mercy",
+    question: "Your terminally ill parent asks you directly: 'Did I fail as a parent?' The truth is yes — they were absent and cold. But they are dying. What do you say?",
+    choices: [
+      { text: "Tell them the truth gently — they deserve honesty, even now.", trait: "Truth-Teller", pts: { control: 5, empathy: 6, integrity: 10, shadow: 4 } },
+      { text: "Lie. Let them die in peace — the truth helps no one now.", trait: "Protector", pts: { control: 4, empathy: 10, integrity: 3, shadow: 2 } },
+      { text: "Deflect. Change the subject. Avoid both truth and the lie.", trait: "Avoider", pts: { control: 3, empathy: 5, integrity: 3, shadow: 7 } },
+      { text: "Say something true but partial — 'You did your best.'", trait: "Diplomat", pts: { control: 5, empathy: 8, integrity: 6, shadow: 3 } }
+    ]
+  },
+  {
+    theme: "⬦ Self vs. Others",
+    question: "You witness a stranger being publicly humiliated by a group of people. Intervening could help them — but also puts you at risk of becoming the next target. You're alone.",
+    choices: [
+      { text: "Intervene loudly and directly — shame the group.", trait: "Protector", pts: { control: 7, empathy: 10, integrity: 9, shadow: 2 } },
+      { text: "Film it discreetly. Share it later to expose them.", trait: "Witness", pts: { control: 6, empathy: 6, integrity: 6, shadow: 5 } },
+      { text: "Approach the victim quietly after — check on them once it stops.", trait: "Cautious Care", pts: { control: 4, empathy: 8, integrity: 6, shadow: 3 } },
+      { text: "Walk away. You can't risk yourself for a stranger.", trait: "Self-Preserving", pts: { control: 5, empathy: 1, integrity: 2, shadow: 10 } }
     ]
   }
 ];
 
 const ARCHETYPES = [
-  { name: "Balanced Guardian", desc: "You weigh logic and feeling in equal measure. People trust you because you show up — not just for yourself, but for others. You're the person others call when things get complicated." },
-  { name: "Principled Empath", desc: "Truth matters deeply to you, but so does how people feel. You rarely cut corners, and when you do, guilt follows quickly. You hold high standards without losing warmth." },
-  { name: "Cautious Realist", desc: "You read the room before you act. Some call it hesitation — you call it strategy. You value outcomes over appearances, and rarely say something you'll regret." },
-  { name: "Intuitive Ally", desc: "Loyalty runs deep in you. You decide with your gut and your gut is often right. You build trust by showing up consistently, even when it costs you something." }
+  { name: "The Shadow Strategist", desc: "You're highly rational under pressure — sometimes uncomfortably so. You see people as variables in equations. This makes you effective, but others sometimes sense something cold beneath the surface." },
+  { name: "The Moral Anchor", desc: "Your ethics are your identity. You'll sacrifice comfort, convenience, even relationships to stay aligned with your values. Rare. Admired. Sometimes lonely." },
+  { name: "The Wounded Protector", desc: "You feel deeply but learned to hide it. You protect others because you know what it's like to not be protected. Your empathy is real — your walls are too." },
+  { name: "The Quiet Rationalizer", desc: "You're pragmatic to a fault. You choose survival, stability, and self-preservation — then construct a story about why it was the right call. Most people do this. You just do it better." },
+  { name: "The Reluctant Idealist", desc: "You want to do the right thing but the real world keeps complicating it. You compromise more than you'd like to admit, and it weighs on you more than most people know." }
 ];
 
 let current = 0;
-let scores = { altruism: 0, integrity: 0, empathy: 0 };
+let scores = { control: 0, empathy: 0, integrity: 0, shadow: 0 };
 let timerInt = null;
-let timeLeft = 12;
+let timeLeft = 20;
 let chosenArchetype = ARCHETYPES[0];
 
 function show(id) {
@@ -671,7 +692,7 @@ function show(id) {
 
 function startGame() {
   current = 0;
-  scores = { altruism: 0, integrity: 0, empathy: 0 };
+  scores = { control: 0, empathy: 0, integrity: 0, shadow: 0 };
   loadScenario();
   show('screenScenario');
 }
@@ -706,7 +727,7 @@ function loadScenario() {
 
 function startTimer() {
   clearInterval(timerInt);
-  timeLeft = 12;
+  timeLeft = 20;
   tick();
   timerInt = setInterval(() => {
     timeLeft--;
@@ -718,7 +739,7 @@ function startTimer() {
 function tick() {
   document.getElementById('timerNum').textContent = timeLeft;
   const arc = document.getElementById('timerArc');
-  arc.style.strokeDashoffset = 119.4 * (1 - timeLeft / 12);
+  arc.style.strokeDashoffset = 119.4 * (1 - timeLeft / 20);
 }
 
 function autoSelect() {
@@ -743,18 +764,28 @@ function pick(idx, pts, btn) {
 function buildInsight() {
   const dominant = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0];
   const domName = dominant[0].charAt(0).toUpperCase() + dominant[0].slice(1);
-  const pct = Math.min(95, Math.round(dominant[1] / 10));
+  const shadowPct = Math.min(95, Math.round(scores.shadow / (SCENARIOS.length * 10) * 100));
 
-  document.getElementById('insightHeadline').textContent = 'High ' + domName + ' Echo — top ' + (100 - pct) + '% globally.';
-  document.getElementById('insightDesc').textContent = 'Your decisions suggest you prioritize ' + domName.toLowerCase() + ' significantly more than the average ECHO player. Here\'s your full trait breakdown:';
+  const insightLines = {
+    Control: 'You trust systems over feelings. You decide fast and carry the weight of it quietly.',
+    Empathy: 'You feel the cost of every choice — for yourself and everyone involved.',
+    Integrity: 'Your moral compass is rigid. That\'s rare. It\'s also a kind of armour.',
+    Shadow: 'You\'re honest about the darker instincts. Most people pretend they don\'t have them.'
+  };
+
+  document.getElementById('insightHeadline').textContent = dominant[0] === 'shadow'
+    ? 'Your Shadow Echo is showing.'
+    : 'Dominant Echo: ' + domName + '.';
+  document.getElementById('insightDesc').textContent = insightLines[domName] || insightLines.Control;
 
   const bars = document.getElementById('barsWrap');
   bars.innerHTML = '';
   [
-    { label: 'Altruism', score: Math.min(100, scores.altruism) },
-    { label: 'Integrity', score: Math.min(100, scores.integrity) },
-    { label: 'Empathy', score: Math.min(100, scores.empathy) },
-    { label: 'Global avg', score: 42 }
+    { label: 'Control', score: Math.min(100, scores.control * 2) },
+    { label: 'Empathy', score: Math.min(100, scores.empathy * 2) },
+    { label: 'Integrity', score: Math.min(100, scores.integrity * 2) },
+    { label: 'Shadow', score: Math.min(100, scores.shadow * 2) },
+    { label: 'Global avg', score: 38 }
   ].forEach(t => {
     const row = document.createElement('div');
     row.className = 'bar-row';
@@ -765,24 +796,22 @@ function buildInsight() {
   show('screenInsight');
   setTimeout(() => { document.querySelectorAll('.bar-fill').forEach(f => { f.style.width = f.dataset.w; }); }, 80);
 
-  const total = scores.altruism + scores.integrity + scores.empathy;
-  if (total > 190) chosenArchetype = ARCHETYPES[1];
-  else if (scores.empathy > scores.integrity) chosenArchetype = ARCHETYPES[3];
-  else if (scores.altruism < 40) chosenArchetype = ARCHETYPES[2];
-  else chosenArchetype = ARCHETYPES[0];
+  // Archetype selection based on dominant trait combo
+  if (scores.shadow >= scores.integrity && scores.shadow >= scores.empathy) chosenArchetype = ARCHETYPES[3];
+  else if (scores.integrity >= scores.empathy && scores.integrity >= scores.control) chosenArchetype = ARCHETYPES[1];
+  else if (scores.empathy >= scores.control && scores.empathy >= scores.shadow) chosenArchetype = ARCHETYPES[2];
+  else if (scores.control >= scores.shadow) chosenArchetype = ARCHETYPES[0];
+  else chosenArchetype = ARCHETYPES[4];
 }
 
 function showProfile() {
-  const extras = [
-    { name: 'Resilience', score: Math.round(Math.random() * 20 + 52) },
-    { name: 'Courage', score: Math.round(Math.random() * 20 + 44) },
-    { name: 'Caution', score: Math.round(Math.random() * 20 + 35) }
-  ];
   const allTraits = [
-    { name: 'Altruism', score: Math.min(100, scores.altruism) },
-    { name: 'Integrity', score: Math.min(100, scores.integrity) },
-    { name: 'Empathy', score: Math.min(100, scores.empathy) },
-    ...extras
+    { name: 'Control', score: Math.min(100, scores.control * 2) },
+    { name: 'Empathy', score: Math.min(100, scores.empathy * 2) },
+    { name: 'Integrity', score: Math.min(100, scores.integrity * 2) },
+    { name: 'Shadow', score: Math.min(100, scores.shadow * 2) },
+    { name: 'Resilience', score: Math.round(Math.random() * 20 + 45) },
+    { name: 'Caution', score: Math.round(Math.random() * 20 + 30) }
   ];
 
   document.getElementById('echoCardEl').innerHTML = `
@@ -793,8 +822,8 @@ function showProfile() {
   `;
 
   const dom = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('rankEl').textContent = 'Top ' + Math.max(5, 100 - Math.min(95, dom[1])) + '%';
-  document.getElementById('altruismEl').textContent = '+' + Math.max(3, Math.round(scores.altruism - 42)) + '%';
+  document.getElementById('rankEl').textContent = 'Top ' + Math.max(5, 100 - Math.min(95, dom[1] * 2)) + '%';
+  document.getElementById('altruismEl').textContent = scores.shadow > 30 ? 'Above avg ↑' : 'Below avg ↓';
 
   show('screenProfile');
 }
