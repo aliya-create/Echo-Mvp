@@ -621,12 +621,12 @@
 const SCENARIOS = [
   {
     theme: "⬦ The Trolley Problem",
-    question: "A runaway trolley is heading toward five people tied to the tracks. You can pull a lever to divert it — but it will kill one person on the side track. That person is a stranger. What do you do?",
+    question: "A runaway trolley is heading toward five people tied to the tracks. You can pull a lever to divert it; but it will kill one person on the side track. That person is a stranger. What do you do?",
     choices: [
-      { text: "Pull the lever. Five lives outweigh one — the math is clear.", trait: "Utilitarian", pts: { control: 9, empathy: 4, integrity: 6, shadow: 5 } },
+      { text: "Pull the lever. Five lives outweigh one; the math is clear.", trait: "Utilitarian", pts: { control: 9, empathy: 4, integrity: 6, shadow: 5 } },
       { text: "Do nothing. Actively causing a death feels different from allowing one.", trait: "Deontologist", pts: { control: 2, empathy: 7, integrity: 9, shadow: 2 } },
-      { text: "Pull it — but I'd carry guilt for that one person forever.", trait: "Empath", pts: { control: 7, empathy: 10, integrity: 6, shadow: 3 } },
-      { text: "I freeze. I can't decide — so I don't.", trait: "Paralysis", pts: { control: 0, empathy: 5, integrity: 3, shadow: 7 } }
+      { text: "Pull it, but I'd carry guilt for that one person forever.", trait: "Empath", pts: { control: 7, empathy: 10, integrity: 6, shadow: 3 } },
+      { text: "I freeze. I can't decide, so I don't.", trait: "Paralysis", pts: { control: 0, empathy: 5, integrity: 3, shadow: 7 } }
     ]
   },
   {
@@ -634,9 +634,9 @@ const SCENARIOS = [
     question: "You discover your best friend of 10 years has been secretly spreading damaging lies about you to your colleagues. They don't know you know. What do you do?",
     choices: [
       { text: "Confront them directly and demand an explanation.", trait: "Confronter", pts: { control: 7, empathy: 5, integrity: 10, shadow: 3 } },
-      { text: "Say nothing — but quietly cut them out of your life forever.", trait: "Silent Exit", pts: { control: 6, empathy: 3, integrity: 5, shadow: 8 } },
+      { text: "Say nothing, but quietly cut them out of your life forever.", trait: "Silent Exit", pts: { control: 6, empathy: 3, integrity: 5, shadow: 8 } },
       { text: "Gather more evidence first. Then decide with full information.", trait: "Strategist", pts: { control: 9, empathy: 4, integrity: 7, shadow: 6 } },
-      { text: "Forgive without confronting — maybe they had reasons.", trait: "Forgiver", pts: { control: 2, empathy: 10, integrity: 4, shadow: 1 } }
+      { text: "Forgive without confronting, maybe they had reasons.", trait: "Forgiver", pts: { control: 2, empathy: 10, integrity: 4, shadow: 1 } }
     ]
   },
   {
@@ -644,35 +644,35 @@ const SCENARIOS = [
     question: "You're offered a high-paying job. Mid-process, you learn the company engages in legal but clearly exploitative practices toward vulnerable communities. The role would make you financially free.",
     choices: [
       { text: "Decline. No amount of money is worth compromising your ethics.", trait: "Principled", pts: { control: 4, empathy: 8, integrity: 10, shadow: 0 } },
-      { text: "Accept — then use the position and income to push change from inside.", trait: "Infiltrator", pts: { control: 9, empathy: 6, integrity: 5, shadow: 6 } },
-      { text: "Accept. This is the real world — someone else would take it anyway.", trait: "Realist", pts: { control: 6, empathy: 2, integrity: 2, shadow: 9 } },
+      { text: "Accept; then use the position and income to push change from inside.", trait: "Infiltrator", pts: { control: 9, empathy: 6, integrity: 5, shadow: 6 } },
+      { text: "Accept. This is the real world, someone else would take it anyway.", trait: "Realist", pts: { control: 6, empathy: 2, integrity: 2, shadow: 9 } },
       { text: "Accept, but quietly donate a portion to offset the harm.", trait: "Compensator", pts: { control: 5, empathy: 5, integrity: 4, shadow: 5 } }
     ]
   },
   {
     theme: "⬦ Truth vs. Mercy",
-    question: "Your terminally ill parent asks you directly: 'Did I fail as a parent?' The truth is yes — they were absent and cold. But they are dying. What do you say?",
+    question: "Your terminally ill parent asks you directly: 'Did I fail as a parent?' The truth is yes, they were absent and cold. But they are dying. What do you say?",
     choices: [
-      { text: "Tell them the truth gently — they deserve honesty, even now.", trait: "Truth-Teller", pts: { control: 5, empathy: 6, integrity: 10, shadow: 4 } },
-      { text: "Lie. Let them die in peace — the truth helps no one now.", trait: "Protector", pts: { control: 4, empathy: 10, integrity: 3, shadow: 2 } },
+      { text: "Tell them the truth gently; they deserve honesty, even now.", trait: "Truth-Teller", pts: { control: 5, empathy: 6, integrity: 10, shadow: 4 } },
+      { text: "Lie. Let them die in peace; the truth helps no one now.", trait: "Protector", pts: { control: 4, empathy: 10, integrity: 3, shadow: 2 } },
       { text: "Deflect. Change the subject. Avoid both truth and the lie.", trait: "Avoider", pts: { control: 3, empathy: 5, integrity: 3, shadow: 7 } },
-      { text: "Say something true but partial — 'You did your best.'", trait: "Diplomat", pts: { control: 5, empathy: 8, integrity: 6, shadow: 3 } }
+      { text: "Say something true but partial; 'You did your best.'", trait: "Diplomat", pts: { control: 5, empathy: 8, integrity: 6, shadow: 3 } }
     ]
   },
   {
     theme: "⬦ Self vs. Others",
-    question: "You witness a stranger being publicly humiliated by a group of people. Intervening could help them — but also puts you at risk of becoming the next target. You're alone.",
+    question: "You witness a stranger being publicly humiliated by a group of people. Intervening could help them, but also puts you at risk of becoming the next target. You're alone.",
     choices: [
-      { text: "Intervene loudly and directly — shame the group.", trait: "Protector", pts: { control: 7, empathy: 10, integrity: 9, shadow: 2 } },
+      { text: "Intervene loudly and directly; shame the group.", trait: "Protector", pts: { control: 7, empathy: 10, integrity: 9, shadow: 2 } },
       { text: "Film it discreetly. Share it later to expose them.", trait: "Witness", pts: { control: 6, empathy: 6, integrity: 6, shadow: 5 } },
-      { text: "Approach the victim quietly after — check on them once it stops.", trait: "Cautious Care", pts: { control: 4, empathy: 8, integrity: 6, shadow: 3 } },
+      { text: "Approach the victim quietly after; check on them once it stops.", trait: "Cautious Care", pts: { control: 4, empathy: 8, integrity: 6, shadow: 3 } },
       { text: "Walk away. You can't risk yourself for a stranger.", trait: "Self-Preserving", pts: { control: 5, empathy: 1, integrity: 2, shadow: 10 } }
     ]
   }
 ];
 
 const ARCHETYPES = [
-  { name: "The Shadow Strategist", desc: "You're highly rational under pressure — sometimes uncomfortably so. You see people as variables in equations. This makes you effective, but others sometimes sense something cold beneath the surface." },
+  { name: "The Shadow Strategist", desc: "You're highly rational under pressure, sometimes uncomfortably so. You see people as variables in equations. This makes you effective, but others sometimes sense something cold beneath the surface." },
   { name: "The Moral Anchor", desc: "Your ethics are your identity. You'll sacrifice comfort, convenience, even relationships to stay aligned with your values. Rare. Admired. Sometimes lonely." },
   { name: "The Wounded Protector", desc: "You feel deeply but learned to hide it. You protect others because you know what it's like to not be protected. Your empathy is real — your walls are too." },
   { name: "The Quiet Rationalizer", desc: "You're pragmatic to a fault. You choose survival, stability, and self-preservation — then construct a story about why it was the right call. Most people do this. You just do it better." },
@@ -682,7 +682,7 @@ const ARCHETYPES = [
 let current = 0;
 let scores = { control: 0, empathy: 0, integrity: 0, shadow: 0 };
 let timerInt = null;
-let timeLeft = 20;
+let timeLeft = 30;
 let chosenArchetype = ARCHETYPES[0];
 
 function show(id) {
