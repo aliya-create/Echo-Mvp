@@ -1,845 +1,509 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ECHO — The Game That Shows Who You Really Are</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECHO — Every Choice Leaves an Echo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#171714;--muted:#6c6b65;--soft:#a09f98;--line:rgba(23,23,20,.13);
+  --paper:#fff;--wash:#f4f2ed;--wash2:#ebe9e3;--accent:#c9ff55;
+  --radius:18px;
+}
+html{background:#dcdad4}
+body{min-height:100vh;background:#dcdad4;color:var(--ink);font-family:Syne,sans-serif;padding:24px 12px 60px}
+button{font:inherit}
+.app{width:min(520px,100%);margin:auto;background:var(--paper);min-height:760px;border-radius:26px;overflow:hidden;box-shadow:0 20px 70px rgba(0,0,0,.12)}
+.screen{display:none;min-height:760px}.screen.active{display:flex;flex-direction:column}
 
-    :root {
-      --bg-primary: #ffffff;
-      --bg-secondary: #f5f4f1;
-      --bg-tertiary: #eeede9;
-      --text-primary: #1a1a18;
-      --text-secondary: #5f5e5a;
-      --text-tertiary: #888780;
-      --border-light: rgba(26,26,24,0.12);
-      --border-mid: rgba(26,26,24,0.22);
-      --border-strong: rgba(26,26,24,0.35);
-      --radius-md: 8px;
-      --radius-lg: 14px;
-      --radius-xl: 20px;
-    }
+/* WELCOME */
+.welcome{padding:44px 28px 30px;justify-content:space-between}
+.logo{font:72px/0.9 "DM Serif Display",serif;letter-spacing:-4px}
+.eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--soft)}
+.welcome-copy{margin-top:70px}
+.welcome h1{font:38px/1.08 "DM Serif Display",serif;max-width:430px}
+.welcome h1 em{font-style:italic}
+.lead{margin-top:18px;color:var(--muted);font-size:14px;line-height:1.7;max-width:410px}
+.teaser{margin-top:28px;background:var(--ink);color:#fff;border-radius:var(--radius);padding:20px}
+.teaser .eyebrow{color:#aaa}
+.teaser p{font:21px/1.4 "DM Serif Display",serif;margin-top:9px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.pill{border:1px solid var(--line);border-radius:999px;padding:7px 10px;font-size:10px;color:var(--muted)}
+.start{width:100%;border:0;background:var(--ink);color:#fff;border-radius:13px;padding:16px;margin-top:22px;cursor:pointer;font-weight:600}
+.start:hover{transform:translateY(-1px)}
+.note{font-size:10px;color:var(--soft);line-height:1.5;text-align:center;margin-top:11px}
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-primary: #1a1a18;
-        --bg-secondary: #242422;
-        --bg-tertiary: #2c2c2a;
-        --text-primary: #f0efe9;
-        --text-secondary: #b4b2a9;
-        --text-tertiary: #888780;
-        --border-light: rgba(240,239,233,0.10);
-        --border-mid: rgba(240,239,233,0.18);
-        --border-strong: rgba(240,239,233,0.30);
-      }
-    }
+/* SCENARIO */
+.scenario{padding:22px 22px 24px}
+.top{display:flex;align-items:center;justify-content:space-between}
+.progress{display:flex;gap:5px;flex:1}
+.dot{height:4px;border-radius:9px;background:var(--wash2);max-width:65px;flex:1}.dot.done{background:var(--ink)}.dot.current{background:#77766f}
+.timer{position:relative;width:54px;height:54px;margin-left:18px;flex:none}
+.timer svg{transform:rotate(-90deg)}
+.arc{stroke:var(--ink);stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+.timer span{position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-weight:600}
+.context{margin-top:32px}
+.theme{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--soft)}
+.scenario-title{font:28px/1.18 "DM Serif Display",serif;margin-top:8px}
+.story{font-size:14px;line-height:1.75;color:var(--muted);margin-top:14px}
+.pressure{margin-top:18px;border-left:2px solid var(--ink);padding-left:12px;font-size:12px;line-height:1.6}
+.question{font:23px/1.4 "DM Serif Display",serif;margin:24px 0 18px}
+.choices{display:grid;gap:9px}
+.choice{display:flex;gap:12px;align-items:flex-start;text-align:left;border:1px solid var(--line);background:#fff;border-radius:13px;padding:14px;cursor:pointer;transition:.16s}
+.choice:hover{background:var(--wash);transform:translateX(2px)}
+.letter{width:27px;height:27px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font-size:11px;flex:none}
+.choice-text{font-size:13px;line-height:1.55;flex:1}
+.choice.selected{background:var(--ink);color:#fff;border-color:var(--ink)}
+.choice.selected .letter{border-color:#fff;background:#fff;color:var(--ink)}
+.choice.locked{pointer-events:none}
+.hint{text-align:center;color:var(--soft);font-size:10px;margin-top:12px}
 
-    html, body {
-      min-height: 100vh;
-      background: var(--bg-tertiary);
-      font-family: 'Syne', sans-serif;
-      color: var(--text-primary);
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 2rem 1rem 4rem;
-    }
+/* CONSEQUENCE */
+.consequence{padding:36px 26px;justify-content:center}
+.result-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--soft)}
+.consequence h2{font:32px/1.2 "DM Serif Display",serif;margin-top:12px}
+.consequence p{font-size:14px;line-height:1.75;color:var(--muted);margin-top:14px}
+.echo-line{height:1px;background:var(--line);margin:28px 0}
+.next{border:0;background:var(--ink);color:#fff;border-radius:12px;padding:15px;width:100%;cursor:pointer}
 
-    .app-shell {
-      width: 100%;
-      max-width: 480px;
-      background: var(--bg-primary);
-      border-radius: var(--radius-xl);
-      border: 0.5px solid var(--border-light);
-      overflow: hidden;
-      min-height: 600px;
-    }
+/* INSIGHT */
+.insight{padding:40px 25px;justify-content:center}
+.insight .eyebrow{text-align:center}
+.insight h2{font:34px/1.15 "DM Serif Display",serif;text-align:center;margin:10px auto;max-width:430px}
+.insight-desc{text-align:center;color:var(--muted);font-size:14px;line-height:1.75;max-width:390px;margin:0 auto 26px}
+.traits{display:grid;gap:12px}
+.trait{display:grid;grid-template-columns:105px 1fr 34px;align-items:center;gap:10px}
+.trait-name{text-align:right;font-size:11px;color:var(--muted)}
+.track{height:7px;background:var(--wash2);border-radius:99px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--ink);border-radius:99px;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.trait-score{font-size:12px;font-weight:600}
+.insight-box{background:var(--wash);border-radius:var(--radius);padding:17px;margin-top:27px}
+.insight-box b{font-size:11px;letter-spacing:1px;text-transform:uppercase}
+.insight-box p{font-size:12px;line-height:1.65;color:var(--muted);margin-top:7px}
+.primary{border:0;background:var(--ink);color:#fff;border-radius:12px;padding:15px;width:100%;margin-top:25px;cursor:pointer}
 
-    .screen { display: none; }
-    .screen.active { display: flex; flex-direction: column; }
+/* PROFILE */
+.profile{padding:24px 22px 32px}
+.profile-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+.profile-title{font:28px/1.1 "DM Serif Display",serif;margin-top:4px}
+.card{background:var(--ink);color:#fff;border-radius:20px;padding:23px;margin-bottom:12px;position:relative;overflow:hidden}
+.card:after{content:"";position:absolute;width:170px;height:170px;border-radius:50%;background:var(--accent);right:-90px;top:-95px;opacity:.9}
+.card-type{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#aaa}
+.card-name{font:31px/1.1 "DM Serif Display",serif;margin-top:7px;max-width:330px}
+.card-desc{font-size:12px;line-height:1.7;color:#c8c8c3;margin-top:12px;max-width:410px}
+.trait-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:18px}
+.trait-cell{background:rgba(255,255,255,.08);border-radius:10px;padding:10px 7px;text-align:center}
+.tc-score{font-size:20px;font-weight:600}.tc-name{font-size:9px;color:#aaa;margin-top:3px}
+.panel{border:1px solid var(--line);border-radius:16px;padding:17px;margin-bottom:12px}
+.panel-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--soft);margin-bottom:12px}
+.compare-row{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+.compare-row:last-child{border:0}.compare-row span:last-child{font-weight:600}
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.action{border-radius:12px;padding:13px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:12px}.action.dark{background:var(--ink);color:#fff;border-color:var(--ink)}
+.replay{width:100%;border:0;background:none;text-decoration:underline;text-underline-offset:4px;color:var(--muted);font-size:11px;margin-top:16px;cursor:pointer}
 
-    /* ── WELCOME ── */
-    .welcome-screen {
-      padding: 3rem 2rem 2.5rem;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      min-height: 600px;
-    }
-
-    .echo-logo {
-      font-family: 'DM Serif Display', serif;
-      font-size: 60px;
-      letter-spacing: -2px;
-      color: var(--text-primary);
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-
-    .echo-tagline {
-      font-size: 12px;
-      color: var(--text-tertiary);
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 2.5rem;
-    }
-
-    .preview-card {
-      background: var(--bg-secondary);
-      border: 0.5px solid var(--border-light);
-      border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      width: 100%;
-      text-align: left;
-      margin-bottom: 2rem;
-    }
-
-    .preview-label {
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      margin-bottom: 10px;
-    }
-
-    .preview-text {
-      font-family: 'DM Serif Display', serif;
-      font-size: 19px;
-      color: var(--text-primary);
-      line-height: 1.45;
-    }
-
-    .start-btn {
-      background: var(--text-primary);
-      color: var(--bg-primary);
-      border: none;
-      border-radius: var(--radius-md);
-      padding: 15px 44px;
-      font-family: 'Syne', sans-serif;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      letter-spacing: 0.3px;
-      transition: opacity 0.15s;
-      margin-bottom: 1rem;
-    }
-    .start-btn:hover { opacity: 0.8; }
-
-    .welcome-meta {
-      font-size: 12px;
-      color: var(--text-tertiary);
-    }
-
-    /* ── SCENARIO ── */
-    .scenario-screen {
-      padding: 1.5rem 1.75rem 2rem;
-      min-height: 600px;
-    }
-
-    .scenario-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 2rem;
-    }
-
-    .progress-dots {
-      display: flex;
-      gap: 6px;
-    }
-
-    .dot {
-      width: 30px;
-      height: 4px;
-      border-radius: 2px;
-      background: var(--border-light);
-      transition: background 0.3s;
-    }
-    .dot.done { background: var(--text-primary); }
-    .dot.current { background: var(--text-secondary); }
-
-    .timer-wrap {
-      position: relative;
-      width: 46px;
-      height: 46px;
-    }
-    .timer-wrap svg { transform: rotate(-90deg); }
-    .t-bg { stroke: var(--border-light); }
-    .t-fg { stroke: var(--text-primary); stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
-    .t-num {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-primary);
-    }
-
-    .scenario-theme-label {
-      font-size: 11px;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      margin-bottom: 8px;
-    }
-
-    .scenario-q {
-      font-family: 'DM Serif Display', serif;
-      font-size: 22px;
-      line-height: 1.45;
-      color: var(--text-primary);
-      margin-bottom: 2rem;
-      flex: 1;
-    }
-
-    .choices {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .choice {
-      background: var(--bg-primary);
-      border: 0.5px solid var(--border-mid);
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
-      font-family: 'Syne', sans-serif;
-      font-size: 14px;
-      color: var(--text-primary);
-      cursor: pointer;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      line-height: 1.45;
-      transition: all 0.14s;
-    }
-    .choice:hover { background: var(--bg-secondary); border-color: var(--border-strong); transform: translateX(3px); }
-    .choice.selected { border-color: var(--text-primary); background: var(--bg-secondary); }
-    .choice.unchosen { opacity: 0.35; pointer-events: none; }
-
-    .c-letter {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      border: 0.5px solid var(--border-mid);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      flex-shrink: 0;
-    }
-    .choice.selected .c-letter {
-      background: var(--text-primary);
-      color: var(--bg-primary);
-      border-color: transparent;
-    }
-
-    .c-trait {
-      font-size: 10px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: var(--bg-secondary);
-      color: var(--text-tertiary);
-      margin-left: auto;
-      flex-shrink: 0;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .choice.selected .c-trait { opacity: 1; }
-
-    /* ── INSIGHT ── */
-    .insight-screen {
-      padding: 2.5rem 2rem;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      min-height: 600px;
-    }
-
-    .insight-eyebrow {
-      font-size: 11px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      margin-bottom: 1rem;
-    }
-
-    .insight-headline {
-      font-family: 'DM Serif Display', serif;
-      font-size: 26px;
-      color: var(--text-primary);
-      line-height: 1.35;
-      margin-bottom: 0.6rem;
-      max-width: 360px;
-    }
-
-    .insight-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.65;
-      max-width: 320px;
-      margin-bottom: 2.5rem;
-    }
-
-    .bars-wrap {
-      width: 100%;
-      max-width: 380px;
-      margin-bottom: 2.5rem;
-    }
-
-    .bar-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 14px;
-    }
-
-    .bar-label {
-      font-size: 13px;
-      color: var(--text-secondary);
-      width: 96px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-
-    .bar-track {
-      flex: 1;
-      height: 6px;
-      background: var(--bg-secondary);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    .bar-fill {
-      height: 100%;
-      border-radius: 3px;
-      background: var(--text-primary);
-      width: 0;
-      transition: width 0.85s cubic-bezier(0.4,0,0.2,1);
-    }
-
-    .bar-pct {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-primary);
-      width: 32px;
-      text-align: left;
-    }
-
-    .insight-btn {
-      background: var(--text-primary);
-      color: var(--bg-primary);
-      border: none;
-      border-radius: var(--radius-md);
-      padding: 14px 36px;
-      font-family: 'Syne', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: opacity 0.15s;
-    }
-    .insight-btn:hover { opacity: 0.8; }
-
-    /* ── PROFILE ── */
-    .profile-screen {
-      padding: 1.5rem 1.75rem 2rem;
-      min-height: 600px;
-    }
-
-    .profile-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1.75rem;
-    }
-
-    .profile-top-label {
-      font-size: 11px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      margin-bottom: 4px;
-    }
-
-    .profile-top-title {
-      font-family: 'DM Serif Display', serif;
-      font-size: 22px;
-      color: var(--text-primary);
-    }
-
-    .profile-top-meta {
-      font-size: 12px;
-      color: var(--text-tertiary);
-      text-align: right;
-    }
-
-    .echo-card {
-      background: var(--bg-secondary);
-      border: 0.5px solid var(--border-light);
-      border-radius: var(--radius-lg);
-      padding: 1.75rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .ec-type {
-      font-size: 11px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      margin-bottom: 6px;
-    }
-
-    .ec-name {
-      font-family: 'DM Serif Display', serif;
-      font-size: 28px;
-      color: var(--text-primary);
-      margin-bottom: 8px;
-    }
-
-    .ec-desc {
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.65;
-      margin-bottom: 1.5rem;
-    }
-
-    .trait-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-
-    .trait-cell {
-      background: var(--bg-primary);
-      border: 0.5px solid var(--border-light);
-      border-radius: var(--radius-md);
-      padding: 10px 8px;
-      text-align: center;
-    }
-
-    .tc-score {
-      font-size: 20px;
-      font-weight: 500;
-      color: var(--text-primary);
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-
-    .tc-name {
-      font-size: 11px;
-      color: var(--text-tertiary);
-    }
-
-    .compare-box {
-      border: 0.5px solid var(--border-light);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .compare-title {
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-tertiary);
-      margin-bottom: 14px;
-    }
-
-    .c-stat {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .c-stat:last-child { margin-bottom: 0; }
-
-    .c-stat-label {
-      font-size: 14px;
-      color: var(--text-secondary);
-    }
-
-    .c-stat-value {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-primary);
-    }
-
-    .rank-pill {
-      display: inline-block;
-      background: var(--bg-secondary);
-      border: 0.5px solid var(--border-light);
-      border-radius: 999px;
-      padding: 4px 14px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-primary);
-    }
-
-    .action-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 1rem;
-    }
-
-    .action-btn {
-      flex: 1;
-      padding: 13px 10px;
-      border-radius: var(--radius-md);
-      font-family: 'Syne', sans-serif;
-      font-size: 13px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: opacity 0.15s, background 0.15s;
-    }
-
-    .action-btn.solid {
-      background: var(--text-primary);
-      color: var(--bg-primary);
-      border: none;
-    }
-    .action-btn.solid:hover { opacity: 0.82; }
-
-    .action-btn.outline {
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      border: 0.5px solid var(--border-mid);
-    }
-    .action-btn.outline:hover { background: var(--bg-secondary); }
-
-    .replay-link {
-      display: block;
-      text-align: center;
-      font-size: 13px;
-      color: var(--text-secondary);
-      cursor: pointer;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      background: none;
-      border: none;
-      font-family: 'Syne', sans-serif;
-      width: 100%;
-    }
-  </style>
+/* RESPONSIVE */
+@media(max-width:430px){
+ body{padding:0;background:#fff}.app{border-radius:0;box-shadow:none}
+ .screen{min-height:100vh}.welcome{padding:32px 20px 24px}
+ .welcome-copy{margin-top:52px}.welcome h1{font-size:34px}
+ .scenario{padding:18px 17px 22px}.scenario-title{font-size:25px}.question{font-size:21px}
+}
+</style>
 </head>
 <body>
-<div class="app-shell">
+<main class="app">
 
-  <!-- WELCOME -->
-  <div class="screen welcome-screen active" id="screenWelcome">
-    <div class="echo-logo">ECHO</div>
-    <div class="echo-tagline">Every choice leaves an echo</div>
-    <div class="preview-card">
-      <div class="preview-label">Today's dilemma</div>
-      <div class="preview-text">"You can save five strangers or one person you love. You have 20 seconds."</div>
+<section class="screen welcome active" id="welcome">
+  <div>
+    <div class="logo">ECHO</div>
+    <div class="eyebrow">Every choice leaves an echo</div>
+    <div class="welcome-copy">
+      <div class="eyebrow">Not a personality quiz.</div>
+      <h1>Let's see who you become <em>when the answer isn't obvious.</em></h1>
+      <p class="lead">Five situations. Real trade-offs. No perfect answers. Take your time, but don't overthink it. ECHO watches the pattern behind your choices.</p>
+      <div class="teaser">
+        <div class="eyebrow">A taste of what's coming</div>
+        <p>“You can protect someone you love, but doing it will cost an innocent stranger. Nobody will ever know what you chose.”</p>
+      </div>
+      <div class="meta">
+        <span class="pill">10 dilemmas</span><span class="pill">~10–12 minutes</span><span class="pill">60 sec each</span><span class="pill">instant profile</span>
+      </div>
+      <button class="start" onclick="startGame()">Enter ECHO →</button>
+      <div class="note">There is no “correct” answer. Choose what you would actually do.</div>
     </div>
-    <button class="start-btn" onclick="startGame()">Begin your echo &rarr;</button>
-    <div class="welcome-meta">5 scenarios &middot; ~3 minutes &middot; instant profile</div>
   </div>
+</section>
 
-  <!-- SCENARIO -->
-  <div class="screen scenario-screen" id="screenScenario">
-    <div class="scenario-header">
-      <div class="progress-dots" id="progressDots"></div>
-      <div class="timer-wrap">
-        <svg width="46" height="46" viewBox="0 0 46 46">
-          <circle class="t-bg" cx="23" cy="23" r="19" fill="none" stroke-width="3"/>
-          <circle class="t-fg" cx="23" cy="23" r="19" fill="none" stroke-width="3"
-            stroke-dasharray="119.4" stroke-dashoffset="0" id="timerArc"/>
-        </svg>
-        <div class="t-num" id="timerNum">20</div>
-      </div>
+<section class="screen scenario" id="scenario">
+  <div class="top">
+    <div class="progress" id="progress"></div>
+    <div class="timer">
+      <svg width="54" height="54" viewBox="0 0 54 54">
+        <circle cx="27" cy="27" r="22" fill="none" stroke="rgba(23,23,20,.10)" stroke-width="3"/>
+        <circle id="arc" class="arc" cx="27" cy="27" r="22" fill="none" stroke-width="3" stroke-dasharray="138.23" stroke-dashoffset="0"/>
+      </svg>
+      <span id="timer">60</span>
     </div>
-    <div class="scenario-theme-label" id="scenarioTheme"></div>
-    <div class="scenario-q" id="scenarioQ"></div>
-    <div class="choices" id="choicesWrap"></div>
   </div>
-
-  <!-- INSIGHT -->
-  <div class="screen insight-screen" id="screenInsight">
-    <div class="insight-eyebrow">Echo insight unlocked</div>
-    <div class="insight-headline" id="insightHeadline"></div>
-    <div class="insight-desc" id="insightDesc"></div>
-    <div class="bars-wrap" id="barsWrap"></div>
-    <button class="insight-btn" onclick="showProfile()">See your echo profile &rarr;</button>
+  <div class="context">
+    <div class="theme" id="theme"></div>
+    <div class="scenario-title" id="scenarioTitle"></div>
+    <div class="story" id="story"></div>
+    <div class="pressure" id="pressure"></div>
   </div>
+  <div class="question" id="question"></div>
+  <div class="choices" id="choices"></div>
+  <div class="hint">Your first instinct counts. You have up to one minute.</div>
+</section>
 
-  <!-- PROFILE -->
-  <div class="screen profile-screen" id="screenProfile">
-    <div class="profile-top">
-      <div>
-        <div class="profile-top-label">Your echo card</div>
-        <div class="profile-top-title">Session complete</div>
-      </div>
-      <div class="profile-top-meta">5 / 5<br>choices made</div>
-    </div>
-    <div class="echo-card" id="echoCardEl"></div>
-    <div class="compare-box">
-      <div class="compare-title">Global compare</div>
-      <div class="c-stat">
-        <span class="c-stat-label">Your shadow echo rank</span>
-        <span class="rank-pill" id="rankEl">Top 18%</span>
-      </div>
-      <div class="c-stat">
-        <span class="c-stat-label">Shadow vs global avg</span>
-        <span class="c-stat-value" id="altruismEl">Above avg ↑</span>
-      </div>
-      <div class="c-stat">
-        <span class="c-stat-label">Players this week</span>
-        <span class="c-stat-value">84,291</span>
-      </div>
-    </div>
-    <div class="action-row">
-      <button class="action-btn solid" onclick="shareResult()">
-        <i class="ti ti-share" aria-hidden="true"></i> Share my echo
-      </button>
-      <button class="action-btn outline" onclick="resetGame()">
-        <i class="ti ti-refresh" aria-hidden="true"></i> Play again
-      </button>
-    </div>
-    <button class="replay-link" onclick="resetGame()">&#8617; Try a different theme</button>
+<section class="screen consequence" id="consequence">
+  <div class="result-tag">The choice you made</div>
+  <h2 id="consequenceTitle"></h2>
+  <p id="consequenceText"></p>
+  <div class="echo-line"></div>
+  <div class="result-tag">What ECHO noticed</div>
+  <p id="patternText"></p>
+  <button class="next" id="nextBtn">Continue →</button>
+</section>
+
+<section class="screen insight" id="insight">
+  <div class="eyebrow">Your first echo</div>
+  <h2 id="insightTitle"></h2>
+  <p class="insight-desc" id="insightDesc"></p>
+  <div class="traits" id="traits"></div>
+  <div class="insight-box">
+    <b>The interesting part</b>
+    <p id="interesting"></p>
   </div>
+  <button class="primary" onclick="showProfile()">See my full Echo Card →</button>
+</section>
 
-</div>
+<section class="screen profile" id="profile">
+  <div class="profile-head">
+    <div><div class="eyebrow">ECHO / SESSION 01</div><div class="profile-title">Your Echo Card</div></div>
+    <div class="eyebrow">10 / 10</div>
+  </div>
+  <div class="card" id="card"></div>
+  <div class="panel">
+    <div class="panel-title">What your pattern suggests</div>
+    <div class="compare-row"><span>Strongest instinct</span><span id="strongest"></span></div>
+    <div class="compare-row"><span>Most conflicted area</span><span id="conflicted"></span></div>
+    <div class="compare-row"><span>Decision style</span><span id="style"></span></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">About this result</div>
+    <div style="font-size:11px;line-height:1.7;color:var(--muted)">
+      This is a behavioral snapshot, not a diagnosis. Your score reflects the choices you made in this session. A longer ECHO experience would make the pattern more reliable.
+    </div>
+  </div>
+  <div class="action-row">
+    <button class="action dark" onclick="shareResult()">Share my Echo</button>
+    <button class="action" onclick="resetGame()">Play again</button>
+  </div>
+  <button class="replay" onclick="resetGame()">↻ Try the dilemmas again</button>
+</section>
+
+</main>
 
 <script>
 const SCENARIOS = [
-  {
-    theme: "⬦ The Trolley Problem",
-    question: "A runaway trolley is heading toward five people tied to the tracks. You can pull a lever to divert it; but it will kill one person on the side track. That person is a stranger. What do you do?",
-    choices: [
-      { text: "Pull the lever. Five lives outweigh one; the math is clear.", trait: "Utilitarian", pts: { control: 9, empathy: 4, integrity: 6, shadow: 5 } },
-      { text: "Do nothing. Actively causing a death feels different from allowing one.", trait: "Deontologist", pts: { control: 2, empathy: 7, integrity: 9, shadow: 2 } },
-      { text: "Pull it, but I'd carry guilt for that one person forever.", trait: "Empath", pts: { control: 7, empathy: 10, integrity: 6, shadow: 3 } },
-      { text: "I freeze. I can't decide, so I don't.", trait: "Paralysis", pts: { control: 0, empathy: 5, integrity: 3, shadow: 7 } }
-    ]
-  },
-  {
-    theme: "⬦ Betrayal",
-    question: "You discover your best friend of 10 years has been secretly spreading damaging lies about you to your colleagues. They don't know you know. What do you do?",
-    choices: [
-      { text: "Confront them directly and demand an explanation.", trait: "Confronter", pts: { control: 7, empathy: 5, integrity: 10, shadow: 3 } },
-      { text: "Say nothing, but quietly cut them out of your life forever.", trait: "Silent Exit", pts: { control: 6, empathy: 3, integrity: 5, shadow: 8 } },
-      { text: "Gather more evidence first. Then decide with full information.", trait: "Strategist", pts: { control: 9, empathy: 4, integrity: 7, shadow: 6 } },
-      { text: "Forgive without confronting, maybe they had reasons.", trait: "Forgiver", pts: { control: 2, empathy: 10, integrity: 4, shadow: 1 } }
-    ]
-  },
-  {
-    theme: "⬦ Power & Corruption",
-    question: "You're offered a high-paying job. Mid-process, you learn the company engages in legal but clearly exploitative practices toward vulnerable communities. The role would make you financially free.",
-    choices: [
-      { text: "Decline. No amount of money is worth compromising your ethics.", trait: "Principled", pts: { control: 4, empathy: 8, integrity: 10, shadow: 0 } },
-      { text: "Accept; then use the position and income to push change from inside.", trait: "Infiltrator", pts: { control: 9, empathy: 6, integrity: 5, shadow: 6 } },
-      { text: "Accept. This is the real world, someone else would take it anyway.", trait: "Realist", pts: { control: 6, empathy: 2, integrity: 2, shadow: 9 } },
-      { text: "Accept, but quietly donate a portion to offset the harm.", trait: "Compensator", pts: { control: 5, empathy: 5, integrity: 4, shadow: 5 } }
-    ]
-  },
-  {
-    theme: "⬦ Truth vs. Mercy",
-    question: "Your terminally ill parent asks you directly: 'Did I fail as a parent?' The truth is yes, they were absent and cold. But they are dying. What do you say?",
-    choices: [
-      { text: "Tell them the truth gently; they deserve honesty, even now.", trait: "Truth-Teller", pts: { control: 5, empathy: 6, integrity: 10, shadow: 4 } },
-      { text: "Lie. Let them die in peace; the truth helps no one now.", trait: "Protector", pts: { control: 4, empathy: 10, integrity: 3, shadow: 2 } },
-      { text: "Deflect. Change the subject. Avoid both truth and the lie.", trait: "Avoider", pts: { control: 3, empathy: 5, integrity: 3, shadow: 7 } },
-      { text: "Say something true but partial; 'You did your best.'", trait: "Diplomat", pts: { control: 5, empathy: 8, integrity: 6, shadow: 3 } }
-    ]
-  },
-  {
-    theme: "⬦ Self vs. Others",
-    question: "You witness a stranger being publicly humiliated by a group of people. Intervening could help them, but also puts you at risk of becoming the next target. You're alone.",
-    choices: [
-      { text: "Intervene loudly and directly; shame the group.", trait: "Protector", pts: { control: 7, empathy: 10, integrity: 9, shadow: 2 } },
-      { text: "Film it discreetly. Share it later to expose them.", trait: "Witness", pts: { control: 6, empathy: 6, integrity: 6, shadow: 5 } },
-      { text: "Approach the victim quietly after; check on them once it stops.", trait: "Cautious Care", pts: { control: 4, empathy: 8, integrity: 6, shadow: 3 } },
-      { text: "Walk away. You can't risk yourself for a stranger.", trait: "Self-Preserving", pts: { control: 5, empathy: 1, integrity: 2, shadow: 10 } }
-    ]
-  }
+{
+ theme:"01 / Loyalty",
+ title:"The person you know is guilty.",
+ story:"Your closest friend calls at 11:40 p.m. Earlier tonight they hit someone with their car and drove away. The person they hit is alive, but badly injured. Your friend panicked. They have no criminal record, and you know this mistake could destroy their life.",
+ pressure:"Then they say: “You’re the only person who can help me. Please don’t make me lose everything.”",
+ question:"What do you do before sunrise?",
+ choices:[
+  {text:"Convince them to turn themselves in. You’ll stay beside them through whatever comes.",tag:"Accountability",pts:{integrity:10,empathy:7,agency:7,risk:5,self:3},after:"You choose consequences over loyalty — but you refuse to abandon the person you love."},
+  {text:"Help them contact a lawyer first. You want facts and options before anyone confesses.",tag:"Strategy",pts:{integrity:6,empathy:6,agency:9,risk:4,self:6},after:"You don't ignore the harm, but you create a buffer before making an irreversible move."},
+  {text:"Give them until morning to decide. If they don't act, you will report what you know.",tag:"Boundary",pts:{integrity:8,empathy:9,agency:8,risk:4,self:5},after:"You give compassion a deadline. The line matters to you, but so does the person standing on the other side of it."},
+  {text:"Stay silent. You couldn't live with yourself if your friend went to prison because of you.",tag:"Loyalty",pts:{integrity:2,empathy:8,agency:3,risk:2,self:9},after:"You protect the relationship — even though part of you knows someone else is paying for that protection."}
+ ]
+},
+{
+ theme:"02 / Ambition",
+ title:"The promotion nobody deserves.",
+ story:"You are one of four people being considered for a promotion. You discover the company is about to choose your least-qualified colleague because their family knows the CEO. You also find a private report proving the decision is already made.",
+ pressure:"You could leak the report anonymously. It would probably stop the promotion. But the leak would expose internal salaries and could get people fired — including someone who quietly helped you get where you are.",
+ question:"What is your move?",
+ choices:[
+  {text:"Leak it. A rigged system deserves to be exposed, even if the fallout is messy.",tag:"Disrupt",pts:{integrity:9,empathy:5,agency:10,risk:9,self:3},after:"You trade certainty for disruption. You don't know who gets hurt, but you refuse to quietly benefit from a rigged game."},
+  {text:"Take the evidence to your manager privately and demand a fair process.",tag:"Institution",pts:{integrity:9,empathy:7,agency:8,risk:5,self:5},after:"You try to fix the system without burning it down — trusting process even though process already failed you."},
+  {text:"Use the information to negotiate for yourself. If the company is political, you'll play politics better.",tag:"Leverage",pts:{integrity:4,empathy:3,agency:10,risk:6,self:10},after:"You stop asking whether the game is fair and start asking whether you're good enough to win it."},
+  {text:"Do nothing. You need the job, and exposing this could hurt people who had nothing to do with the decision.",tag:"Preserve",pts:{integrity:4,empathy:8,agency:3,risk:2,self:9},after:"You choose stability over confrontation. The unfairness bothers you — but not enough to gamble everything."}
+ ]
+},
+{
+ theme:"03 / Truth",
+ title:"The truth that changes nothing.",
+ story:"Your sibling asks you to review a message before sending it to their partner. They discovered an affair. The evidence is real. But the partner has just been diagnosed with a serious illness and has not told anyone yet.",
+ pressure:"Your sibling says: “If I send this tonight, their life falls apart. If I don't, I'm the one living a lie.” You are the only person they are asking.",
+ question:"What do you tell them?",
+ choices:[
+  {text:"Send it. Illness doesn't erase betrayal, and your sibling deserves the truth.",tag:"Truth",pts:{integrity:10,empathy:5,agency:8,risk:7,self:5},after:"You refuse to let sympathy rewrite the facts. Pain doesn't make a betrayal less real."},
+  {text:"Wait until tomorrow. One night won't change the truth, but tonight could change how it lands.",tag:"Timing",pts:{integrity:8,empathy:9,agency:7,risk:4,self:5},after:"You don't choose silence — you choose timing. For you, when something is said can matter almost as much as whether it is."},
+  {text:"Ask your sibling what outcome they actually want before deciding what to send.",tag:"Reflection",pts:{integrity:7,empathy:8,agency:8,risk:4,self:4},after:"You slow the moment down. You care less about delivering a verdict than understanding what your sibling is really trying to change."},
+  {text:"Tell them not to send it. If the illness is serious, some truths are cruel rather than useful.",tag:"Mercy",pts:{integrity:4,empathy:10,agency:5,risk:2,self:4},after:"You believe truth has a purpose — and sometimes protecting someone from it can feel more human than exposing it."}
+ ]
+},
+{
+ theme:"04 / Fear",
+ title:"Nobody will know you were there.",
+ story:"You are walking home and see three people surrounding a stranger outside a closed shop. They are shouting. One person pushes the stranger to the ground. Your phone is in your hand. There is no one else nearby.",
+ pressure:"You could intervene, call the police, film from a distance, or keep walking. You estimate the chance of becoming a target at roughly 50%.",
+ question:"What do you actually do?",
+ choices:[
+  {text:"Call emergency services immediately and stay nearby so the victim isn't alone.",tag:"Measured Courage",pts:{integrity:9,empathy:9,agency:8,risk:6,self:4},after:"You don't pretend fear isn't there. You simply decide it doesn't get the final vote."},
+  {text:"Step between them and tell the group you're calling the police.",tag:"Confront",pts:{integrity:10,empathy:10,agency:10,risk:10,self:2},after:"You turn yourself into the visible obstacle. It could work brilliantly — or make the situation worse."},
+  {text:"Film everything from a safe distance and call for help without approaching.",tag:"Evidence",pts:{integrity:7,empathy:7,agency:7,risk:3,self:7},after:"You protect your ability to act later. It is safer, less heroic, and potentially more useful than people realize."},
+  {text:"Keep walking. You hate it, but you are not willing to gamble your safety for a stranger.",tag:"Self-Preservation",pts:{integrity:3,empathy:4,agency:3,risk:1,self:10},after:"You choose yourself. That doesn't mean you don't care — it means your own safety has a boundary."}
+ ]
+},
+{
+ theme:"05 / Consequence",
+ title:"The shortcut that nobody sees.",
+ story:"You are leading a small team. A deadline is impossible unless you quietly skip a quality check. The product will probably work. There is a small chance it won't — and if it fails, the customer will never know the shortcut existed. Your team is exhausted.",
+ pressure:"Your manager tells you: “Make the call. If we miss this deadline, three people may lose their jobs.”",
+ question:"Do you ship?",
+ choices:[
+  {text:"No. Tell the truth about the deadline and accept whatever consequence follows.",tag:"Principle",pts:{integrity:10,empathy:6,agency:8,risk:7,self:5},after:"You protect the standard even when the standard becomes expensive. You'd rather explain failure than hide the reason for it."},
+  {text:"Ship it, but document the skipped check and personally own the risk.",tag:"Calculated Risk",pts:{integrity:7,empathy:8,agency:10,risk:8,self:6},after:"You accept the risk deliberately. Your instinct isn't perfection — it's accountable action."},
+  {text:"Ask the team to choose together. If everyone accepts the risk, you ship.",tag:"Collective",pts:{integrity:7,empathy:10,agency:7,risk:6,self:4},after:"You spread the decision instead of carrying it alone. Consensus matters to you, especially when the consequences are shared."},
+  {text:"Ship it quietly. The probability of failure is low, and people need their jobs.",tag:"Pragmatist",pts:{integrity:4,empathy:7,agency:8,risk:7,self:8},after:"You prioritize the people in front of you over an abstract standard. If the shortcut works, nobody suffers — and that's your calculation."}
+ ]
+},
+{
+ theme:"06 / Friendship",
+ title:"The message you were never meant to see.",
+ story:"You borrow your friend's laptop to finish urgent work. A notification appears. You accidentally see a group chat where two close friends are discussing how exhausting they find you lately. They don't know you saw it.",
+ pressure:"You can read more and learn exactly what they said, close the laptop and pretend you saw nothing, or confront them immediately.",
+ question:"What do you do?",
+ choices:[
+  {text:"Close it. You weren't meant to see it, and privacy still matters even when the truth hurts.",tag:"Restraint",pts:{integrity:9,empathy:8,agency:5,risk:3,self:6},after:"You protect their privacy even though it means living with uncertainty. Knowing everything isn't always worth the cost."},
+  {text:"Read enough to understand the context. You need to know whether this is a real problem or one bad conversation.",tag:"Information",pts:{integrity:5,empathy:5,agency:8,risk:5,self:8},after:"You choose information before confrontation. Uncertainty bothers you more than the possibility of discovering something painful."},
+  {text:"Close it, then ask them later if something has felt off between you lately.",tag:"Directness",pts:{integrity:8,empathy:10,agency:8,risk:5,self:4},after:"You refuse both snooping and pretending. You'd rather create a difficult conversation than let a hidden resentment grow."},
+  {text:"Confront them immediately. You already know enough to know something is wrong.",tag:"Boundary",pts:{integrity:7,empathy:5,agency:10,risk:8,self:7},after:"You don't tolerate hidden tension well. Once you know something important exists, you want it brought into the open."}
+ ]
+},
+{
+ theme:"07 / Money",
+ title:"The money that could change your life.",
+ story:"A payment app accidentally sends you ₹2,00,000. The app is clearly at fault. You have debts, your family needs money, and nobody contacts you for three days.",
+ pressure:"You could return it immediately, wait to see if they notice, or use some of it and replace it later. There is a real chance nobody ever comes looking.",
+ question:"What do you do?",
+ choices:[
+  {text:"Report it immediately and don't touch the money.",tag:"Clean Line",pts:{integrity:10,empathy:7,agency:6,risk:3,self:4},after:"You treat ownership as a simple line. Need may explain temptation, but it doesn't rewrite where the money came from."},
+  {text:"Wait. If nobody contacts you, then decide what to do.",tag:"Delay",pts:{integrity:6,empathy:6,agency:5,risk:5,self:7},after:"You don't claim the money, but you don't volunteer to give it back before you're forced to either."},
+  {text:"Contact them and negotiate a legitimate reward for the inconvenience.",tag:"Leverage",pts:{integrity:8,empathy:6,agency:9,risk:6,self:8},after:"You look for a third path: neither guilt nor surrender, but a way to turn an accident into a fair transaction."},
+  {text:"Use what you urgently need and promise yourself you'll repay it if they ask.",tag:"Necessity",pts:{integrity:3,empathy:7,agency:7,risk:8,self:10},after:"You prioritize immediate human need over a clean principle. Whether that feels practical or dangerous depends on what happens next."}
+ ]
+},
+{
+ theme:"08 / Leadership",
+ title:"The person everyone blames.",
+ story:"Your team misses a major deadline. Your manager wants a name. One teammate did make the biggest mistake, but you know the real cause was a process you designed. Nobody else knows that.",
+ pressure:"If you accept responsibility, your promotion may disappear. If you let the teammate take the blame, they could be fired.",
+ question:"What do you say in the meeting?",
+ choices:[
+  {text:"Own the failure publicly. You designed the process, so the outcome is partly yours.",tag:"Ownership",pts:{integrity:10,empathy:9,agency:9,risk:8,self:3},after:"You trade status for responsibility. Your instinct is that leadership means absorbing consequences, not distributing them downward."},
+  {text:"Explain the process failure without naming anyone. Fix the system and move on.",tag:"System",pts:{integrity:8,empathy:8,agency:9,risk:5,self:5},after:"You focus attention on the broken mechanism rather than the easiest person to punish."},
+  {text:"Tell your manager privately that the teammate made the mistake, but ask for context before any decision.",tag:"Balance",pts:{integrity:7,empathy:7,agency:8,risk:6,self:7},after:"You avoid lying, but you also avoid volunteering yourself as the only person responsible."},
+  {text:"Stay quiet. Your teammate should have checked their work, and you can't keep rescuing everyone.",tag:"Boundary",pts:{integrity:4,empathy:4,agency:6,risk:5,self:10},after:"You draw a hard boundary around responsibility. At some point, you believe people have to own their own mistakes."}
+ ]
+},
+{
+ theme:"09 / Love",
+ title:"The life you didn't choose.",
+ story:"Your partner gets an offer in another country. It is the opportunity they have dreamed about for years. You have built a stable life where you are, including a career you worked hard for and parents who depend on you nearby.",
+ pressure:"They say: “I don't want to choose between you and this. But someone is going to have to give something up.”",
+ question:"What do you do?",
+ choices:[
+  {text:"Ask them to take the opportunity. You don't want love to become the reason they regret their life.",tag:"Release",pts:{integrity:8,empathy:10,agency:6,risk:7,self:2},after:"You protect their freedom even though it may cost you the relationship. Love, for you, cannot become ownership."},
+  {text:"Go with them. You can rebuild a career; you don't want to rebuild the relationship.",tag:"Commitment",pts:{integrity:7,empathy:9,agency:8,risk:8,self:4},after:"You choose the relationship as the thing worth destabilizing your life for."},
+  {text:"Refuse to decide now. Spend a month testing what a long-distance or temporary move could actually look like.",tag:"Experiment",pts:{integrity:7,empathy:8,agency:9,risk:5,self:6},after:"You resist turning a complicated life decision into a dramatic binary. You want evidence before sacrifice."},
+  {text:"Tell them you won't move. If they choose the opportunity, the relationship ends.",tag:"Boundary",pts:{integrity:9,empathy:5,agency:10,risk:5,self:10},after:"You make the cost explicit. You care deeply, but you won't erase your own life to prove it."}
+ ]
+},
+{
+ theme:"10 / Power",
+ title:"The rule you can bend.",
+ story:"You are given authority over a decision that normally requires three people to approve. An urgent situation appears where waiting could seriously hurt someone. You know the rules exist for a reason, but you also know nobody will punish you if you make the call and it works.",
+ pressure:"There is no perfect option. You can follow the process, bend it and document what you did, or use your authority without telling anyone.",
+ question:"What do you do when the clock is running out?",
+ choices:[
+  {text:"Follow the process. Rules become meaningless if people only respect them when convenient.",tag:"Principle",pts:{integrity:10,empathy:6,agency:5,risk:2,self:5},after:"You protect the institution even when the institution makes the urgent answer harder."},
+  {text:"Make the exception, document it, and tell everyone afterward.",tag:"Responsible Power",pts:{integrity:9,empathy:9,agency:10,risk:8,self:5},after:"You believe authority can be used outside the rules — but only if you're willing to leave a record of the choice."},
+  {text:"Make the call quietly. If it works, explain later. If it fails, deal with the consequences yourself.",tag:"Autonomy",pts:{integrity:5,empathy:8,agency:10,risk:10,self:6},after:"You accept personal responsibility in exchange for speed. You trust your judgment more than the process in front of you."},
+  {text:"Ask someone else to make the call. You don't want one urgent moment to define how you use power.",tag:"Caution",pts:{integrity:7,empathy:7,agency:3,risk:3,self:8},after:"You resist the temptation to become the sole decision-maker. For you, power is partly about knowing when not to use it."}
+ ]
+}
 ];
 
 const ARCHETYPES = [
-  { name: "The Shadow Strategist", desc: "You're highly rational under pressure, sometimes uncomfortably so. You see people as variables in equations. This makes you effective, but others sometimes sense something cold beneath the surface." },
-  { name: "The Moral Anchor", desc: "Your ethics are your identity. You'll sacrifice comfort, convenience, even relationships to stay aligned with your values. Rare. Admired. Sometimes lonely." },
-  { name: "The Wounded Protector", desc: "You feel deeply but learned to hide it. You protect others because you know what it's like to not be protected. Your empathy is real — your walls are too." },
-  { name: "The Quiet Rationalizer", desc: "You're pragmatic to a fault. You choose survival, stability, and self-preservation — then construct a story about why it was the right call. Most people do this. You just do it better." },
-  { name: "The Reluctant Idealist", desc: "You want to do the right thing but the real world keeps complicating it. You compromise more than you'd like to admit, and it weighs on you more than most people know." }
+ {name:"The Moral Architect",desc:"You don't just ask what works. You ask what kind of person you become by doing it. Your choices suggest that principles are not decoration for you — they are infrastructure."},
+ {name:"The Calculated Protector",desc:"You care about people, but you rarely confuse caring with acting blindly. You look for the move that protects the most without pretending the trade-off isn't real."},
+ {name:"The Strategic Realist",desc:"You see the world as it is before deciding how you wish it were. You can tolerate uncomfortable choices when you believe they produce a better outcome."},
+ {name:"The Quiet Idealist",desc:"You want to do the right thing, but you understand that real situations are messy. You often search for a third option when everyone else sees only two."},
+ {name:"The Self-Preserving Pragmatist",desc:"You are more honest than most about the value of survival, stability and self-interest. You don't necessarily lack empathy — you simply don't believe empathy requires self-sacrifice."}
 ];
 
-let current = 0;
-let scores = { control: 0, empathy: 0, integrity: 0, shadow: 0 };
-let timerInt = null;
-let timeLeft = 30;
-let chosenArchetype = ARCHETYPES[0];
+let current=0, timeLeft=60, timerInt=null, answered=false;
+let scores={integrity:0,empathy:0,agency:0,risk:0,self:0};
+let choicesMade=[];
+let chosenArchetype=null;
 
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+function show(id){
+ document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+ window.scrollTo({top:0,behavior:"smooth"});
 }
-
-function startGame() {
-  current = 0;
-  scores = { control: 0, empathy: 0, integrity: 0, shadow: 0 };
-  loadScenario();
-  show('screenScenario');
+function startGame(){
+ current=0; choicesMade=[]; answered=false;
+ scores={integrity:0,empathy:0,agency:0,risk:0,self:0};
+ loadScenario(); show("scenario");
 }
-
-function loadScenario() {
-  const s = SCENARIOS[current];
-  document.getElementById('scenarioTheme').textContent = s.theme;
-  document.getElementById('scenarioQ').textContent = '\u201c' + s.question + '\u201d';
-
-  const dots = document.getElementById('progressDots');
-  dots.innerHTML = '';
-  SCENARIOS.forEach((_, i) => {
-    const d = document.createElement('div');
-    d.className = 'dot' + (i < current ? ' done' : i === current ? ' current' : '');
-    dots.appendChild(d);
-  });
-
-  const wrap = document.getElementById('choicesWrap');
-  wrap.innerHTML = '';
-  ['A','B','C','D'].forEach((letter, i) => {
-    if (!s.choices[i]) return;
-    const c = s.choices[i];
-    const btn = document.createElement('button');
-    btn.className = 'choice';
-    btn.innerHTML = `<span class="c-letter">${letter}</span><span style="flex:1">${c.text}</span><span class="c-trait">${c.trait}</span>`;
-    btn.onclick = () => pick(i, c.pts, btn);
-    wrap.appendChild(btn);
-  });
-
-  startTimer();
+function renderProgress(){
+ const p=document.getElementById("progress");p.innerHTML="";
+ SCENARIOS.forEach((_,i)=>{
+  const d=document.createElement("div");
+  d.className="dot "+(i<current?"done":i===current?"current":"");
+  p.appendChild(d);
+ });
 }
-
-function startTimer() {
-  clearInterval(timerInt);
-  timeLeft = 20;
-  tick();
-  timerInt = setInterval(() => {
-    timeLeft--;
-    tick();
-    if (timeLeft <= 0) { clearInterval(timerInt); autoSelect(); }
-  }, 1000);
+function loadScenario(){
+ answered=false;
+ const s=SCENARIOS[current];
+ renderProgress();
+ document.getElementById("theme").textContent=s.theme;
+ document.getElementById("scenarioTitle").textContent=s.title;
+ document.getElementById("story").textContent=s.story;
+ document.getElementById("pressure").textContent=s.pressure;
+ document.getElementById("question").textContent=s.question;
+ const wrap=document.getElementById("choices");wrap.innerHTML="";
+ s.choices.forEach((c,i)=>{
+  const b=document.createElement("button");b.className="choice";
+  b.innerHTML=`<span class="letter">${String.fromCharCode(65+i)}</span><span class="choice-text">${c.text}</span>`;
+  b.onclick=()=>pick(i,b);wrap.appendChild(b);
+ });
+ startTimer();
 }
-
-function tick() {
-  document.getElementById('timerNum').textContent = timeLeft;
-  const arc = document.getElementById('timerArc');
-  arc.style.strokeDashoffset = 119.4 * (1 - timeLeft / 20);
+function startTimer(){
+ clearInterval(timerInt);timeLeft=60;tick();
+ timerInt=setInterval(()=>{
+  timeLeft--;tick();
+  if(timeLeft<=0){clearInterval(timerInt);timeoutChoice()}
+ },1000);
 }
-
-function autoSelect() {
-  const btns = document.querySelectorAll('.choice');
-  if (btns.length) btns[0].click();
+function tick(){
+ document.getElementById("timer").textContent=timeLeft;
+ document.getElementById("arc").style.strokeDashoffset=138.23*(1-timeLeft/60);
 }
-
-function pick(idx, pts, btn) {
-  clearInterval(timerInt);
-  Object.keys(pts).forEach(k => { scores[k] = Math.min(100, scores[k] + pts[k] * 10); });
-  document.querySelectorAll('.choice').forEach((b, i) => {
-    b.style.pointerEvents = 'none';
-    b.classList.add(i === idx ? 'selected' : 'unchosen');
-  });
-  setTimeout(() => {
-    current++;
-    if (current < SCENARIOS.length) loadScenario();
-    else buildInsight();
-  }, 900);
+function timeoutChoice(){
+ if(answered)return;
+ const buttons=document.querySelectorAll(".choice");
+ if(buttons.length) pick(-1,buttons[0],true);
 }
-
-function buildInsight() {
-  const dominant = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0];
-  const domName = dominant[0].charAt(0).toUpperCase() + dominant[0].slice(1);
-  const shadowPct = Math.min(95, Math.round(scores.shadow / (SCENARIOS.length * 10) * 100));
-
-  const insightLines = {
-    Control: 'You trust systems over feelings. You decide fast and carry the weight of it quietly.',
-    Empathy: 'You feel the cost of every choice — for yourself and everyone involved.',
-    Integrity: 'Your moral compass is rigid. That\'s rare. It\'s also a kind of armour.',
-    Shadow: 'You\'re honest about the darker instincts. Most people pretend they don\'t have them.'
-  };
-
-  document.getElementById('insightHeadline').textContent = dominant[0] === 'shadow'
-    ? 'Your Shadow Echo is showing.'
-    : 'Dominant Echo: ' + domName + '.';
-  document.getElementById('insightDesc').textContent = insightLines[domName] || insightLines.Control;
-
-  const bars = document.getElementById('barsWrap');
-  bars.innerHTML = '';
-  [
-    { label: 'Control', score: Math.min(100, scores.control * 2) },
-    { label: 'Empathy', score: Math.min(100, scores.empathy * 2) },
-    { label: 'Integrity', score: Math.min(100, scores.integrity * 2) },
-    { label: 'Shadow', score: Math.min(100, scores.shadow * 2) },
-    { label: 'Global avg', score: 38 }
-  ].forEach(t => {
-    const row = document.createElement('div');
-    row.className = 'bar-row';
-    row.innerHTML = `<div class="bar-label">${t.label}</div><div class="bar-track"><div class="bar-fill" data-w="${t.score}%"></div></div><div class="bar-pct">${t.score}</div>`;
-    bars.appendChild(row);
-  });
-
-  show('screenInsight');
-  setTimeout(() => { document.querySelectorAll('.bar-fill').forEach(f => { f.style.width = f.dataset.w; }); }, 80);
-
-  // Archetype selection based on dominant trait combo
-  if (scores.shadow >= scores.integrity && scores.shadow >= scores.empathy) chosenArchetype = ARCHETYPES[3];
-  else if (scores.integrity >= scores.empathy && scores.integrity >= scores.control) chosenArchetype = ARCHETYPES[1];
-  else if (scores.empathy >= scores.control && scores.empathy >= scores.shadow) chosenArchetype = ARCHETYPES[2];
-  else if (scores.control >= scores.shadow) chosenArchetype = ARCHETYPES[0];
-  else chosenArchetype = ARCHETYPES[4];
+function pick(index,button,timedOut=false){
+ if(answered)return;
+ answered=true;clearInterval(timerInt);
+ const s=SCENARIOS[current];
+ const c=index>=0?s.choices[index]:{text:"You didn't choose before the clock ran out.",tag:"Hesitation",pts:{integrity:4,empathy:4,agency:2,risk:2,self:5},after:"You let the situation choose for you. Sometimes hesitation is itself a decision — especially when time is part of the problem."};
+ Object.keys(c.pts).forEach(k=>scores[k]+=c.pts[k]);
+ choicesMade.push({scenario:s.title,index,tag:c.tag,timedOut});
+ document.querySelectorAll(".choice").forEach(x=>x.classList.add("locked"));
+ if(!timedOut)button.classList.add("selected");
+ setTimeout(()=>showConsequence(c),550);
 }
-
-function showProfile() {
-  const allTraits = [
-    { name: 'Control', score: Math.min(100, scores.control * 2) },
-    { name: 'Empathy', score: Math.min(100, scores.empathy * 2) },
-    { name: 'Integrity', score: Math.min(100, scores.integrity * 2) },
-    { name: 'Shadow', score: Math.min(100, scores.shadow * 2) },
-    { name: 'Resilience', score: Math.round(Math.random() * 20 + 45) },
-    { name: 'Caution', score: Math.round(Math.random() * 20 + 30) }
-  ];
-
-  document.getElementById('echoCardEl').innerHTML = `
-    <div class="ec-type">Echo archetype</div>
-    <div class="ec-name">${chosenArchetype.name}</div>
-    <div class="ec-desc">${chosenArchetype.desc}</div>
-    <div class="trait-grid">${allTraits.map(t => `<div class="trait-cell"><div class="tc-score">${t.score}</div><div class="tc-name">${t.name}</div></div>`).join('')}</div>
-  `;
-
-  const dom = Object.entries(scores).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('rankEl').textContent = 'Top ' + Math.max(5, 100 - Math.min(95, dom[1] * 2)) + '%';
-  document.getElementById('altruismEl').textContent = scores.shadow > 30 ? 'Above avg ↑' : 'Below avg ↓';
-
-  show('screenProfile');
+function showConsequence(c){
+ document.getElementById("consequenceTitle").textContent=c.tag;
+ document.getElementById("consequenceText").textContent=c.after;
+ const strongest=getSorted()[0][0];
+ const pattern={
+  integrity:"You keep returning to what feels defensible, even when the practical answer is tempting.",
+  empathy:"You repeatedly account for the human cost, not just the cleanest outcome.",
+  agency:"You dislike leaving important outcomes to chance. You tend to make the uncomfortable call.",
+  risk:"You seem willing to absorb uncertainty when the alternative feels worse.",
+  self:"You keep a clear line around what you are willing to sacrifice — including yourself."
+ };
+ document.getElementById("patternText").textContent=pattern[strongest];
+ document.getElementById("nextBtn").onclick=()=>{
+  current++;
+  if(current<SCENARIOS.length){loadScenario();show("scenario")}
+  else buildInsight();
+ };
+ show("consequence");
 }
-
-function shareResult() {
-  const text = 'I just played ECHO and got "' + chosenArchetype.name + '" — every choice leaves an echo. What does yours say about you?';
-  if (navigator.share) {
-    navigator.share({ title: 'My ECHO result', text: text, url: window.location.href });
-  } else {
-    navigator.clipboard.writeText(text + ' ' + window.location.href).then(() => {
-      alert('Result copied to clipboard — paste it anywhere to share!');
-    });
-  }
+function getSorted(){return Object.entries(scores).sort((a,b)=>b[1]-a[1])}
+function scorePercent(v){
+ const max=50; return Math.max(8,Math.min(100,Math.round(v/max*100)));
 }
-
-function resetGame() { startGame(); }
+function buildInsight(){
+ const sorted=getSorted(), top=sorted[0][0], second=sorted[1][0];
+ const names={integrity:"Integrity",empathy:"Empathy",agency:"Agency",risk:"Risk Tolerance",self:"Self-Preservation"};
+ const headlines={
+  integrity:"You don't make decisions just to win.",
+  empathy:"You notice the people inside the problem.",
+  agency:"You'd rather make the hard call than avoid it.",
+  risk:"You can tolerate uncertainty when the stakes feel worth it.",
+  self:"You know where your own line is."
+ };
+ const desc={
+  integrity:"Across the dilemmas, you repeatedly treated your internal standard as something worth paying for — even when breaking it would have been easier.",
+  empathy:"Your choices kept returning to consequences for actual people. You seem less interested in being technically right than in understanding who absorbs the cost.",
+  agency:"When situations became messy, you tended to move toward action. You don't necessarily want control for its own sake — you want ownership of the outcome.",
+  risk:"You didn't automatically choose safety. When the potential upside or principle felt strong enough, uncertainty became something you were willing to carry.",
+  self:"Your choices suggest a strong instinct for boundaries and survival. You can care about others without automatically volunteering to lose yourself for them."
+ };
+ document.getElementById("insightTitle").textContent=headlines[top];
+ document.getElementById("insightDesc").textContent=desc[top];
+ const box=document.getElementById("traits");box.innerHTML="";
+ Object.entries(scores).forEach(([k,v])=>{
+  const pct=scorePercent(v);
+  const row=document.createElement("div");row.className="trait";
+  row.innerHTML=`<div class="trait-name">${names[k]}</div><div class="track"><div class="fill" data-w="${pct}%"></div></div><div class="trait-score">${pct}</div>`;
+  box.appendChild(row);
+ });
+ const conflicts=Math.abs(scores[top]-scores[second]);
+ document.getElementById("interesting").textContent=conflicts<5
+  ? `Here's the interesting part: ${names[top]} and ${names[second]} are almost tied. You don't have one clean decision style — you have a tension between ${names[top].toLowerCase()} and ${names[second].toLowerCase()}.`
+  : `Here's the interesting part: your strongest instinct is ${names[top].toLowerCase()}, but your second strongest is ${names[second].toLowerCase()}. That gap is where your decisions get interesting.`;
+ show("insight");
+ setTimeout(()=>document.querySelectorAll(".fill").forEach(x=>x.style.width=x.dataset.w),80);
+ chosenArchetype=chooseArchetype();
+}
+function chooseArchetype(){
+ const s=scores;
+ if(s.integrity>=s.agency && s.integrity>=s.empathy && s.integrity>=s.self)return ARCHETYPES[0];
+ if(s.empathy>=s.agency && s.empathy>=s.self)return ARCHETYPES[1];
+ if(s.agency>=s.integrity && s.agency>=s.empathy && s.agency>=s.self)return ARCHETYPES[2];
+ if(Math.abs(s.integrity-s.empathy)<8 && s.agency>=s.self-4)return ARCHETYPES[3];
+ return ARCHETYPES[4];
+}
+function showProfile(){
+ const names={integrity:"Integrity",empathy:"Empathy",agency:"Agency",risk:"Risk Tolerance",self:"Self-Preservation"};
+ const sorted=getSorted(),top=sorted[0][0],second=sorted[1][0];
+ const style=scores.agency>=scores.empathy+8?"Decisive":scores.empathy>=scores.agency+8?"People-first":scores.self>=scores.integrity+7?"Self-protective":"Deliberate";
+ const grid=sorted.map(([k,v])=>({name:names[k],score:scorePercent(v)}));
+ document.getElementById("card").innerHTML=`
+  <div class="card-type">Your current archetype</div>
+  <div class="card-name">${chosenArchetype.name}</div>
+  <div class="card-desc">${chosenArchetype.desc}</div>
+  <div class="trait-grid">${grid.map(t=>`<div class="trait-cell"><div class="tc-score">${t.score}</div><div class="tc-name">${t.name}</div></div>`).join("")}</div>`;
+ document.getElementById("strongest").textContent=names[top];
+ document.getElementById("conflicted").textContent=names[second];
+ document.getElementById("style").textContent=style;
+ show("profile");
+}
+function shareResult(){
+ const text=`I played ECHO and got "${chosenArchetype.name}". Apparently, the way I make hard decisions says more about me than I expected.`;
+ if(navigator.share)navigator.share({title:"My ECHO result",text,url:location.href});
+ else navigator.clipboard?.writeText(text+" "+location.href).then(()=>alert("Your ECHO result was copied."));
+}
+function resetGame(){startGame()}
 </script>
 </body>
 </html>
